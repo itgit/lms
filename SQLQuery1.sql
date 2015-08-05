@@ -1,28 +1,28 @@
-﻿-- use [aspnet-MVCrepetition-20150727093829]
-/*
-select * from AspNetUsers
-select * from AspNetRoles
-select * from AspNetUserRoles
-*/
+﻿select * from AspNetUsers;
+select * from AspNetRoles;
+select * from AspNetUserRoles;
 
-select 
-AspNetUsers.FirstName
-from AspNetUserRoles
-join AspNetUsers on AspNetUserRoles.UserId = AspNetUsers.Id
-join AspNetRoles on AspNetUserRoles.RoleId = AspNetRoles.Id
-where 
-1 = 1
-and AspNetRoles.Name like 'adm%'
-
-select 
---email
---,username
-*
+select *
 from AspNetUsers
-where UserName = 'yxkalle'
+Left outer join AspNetUserRoles on AspNetUserRoles.UserId = AspNetUsers.Id
 
---update AspNetUsers
---set lastname='Bengtsson'
-set firstname=NULL
-where UserName = 'yxkalle'
+select
+ AspNetUserRoles.*, 
+ AspNetUsers.*
+from C --on AspNetUserRoles.UserId = AspNetUsers.Id
+
+select * from  AspNetUserRoles, AspNetUsers
+where AspNetUserRoles.UserId = AspNetUsers.Id
+
+select UserId as 'idrubrik' from  AspNetUserRoles
+union
+select Id from  AspNetUsers;
+
+
+
+
+
+
+
+
 

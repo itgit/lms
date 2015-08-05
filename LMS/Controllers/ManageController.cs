@@ -323,30 +323,13 @@ namespace LMS.Controllers
             return result.Succeeded ? RedirectToAction("ManageLogins") : RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
         }
 
+        public ActionResult EditUsers()
+        {
+            return View();
+        }
+
         public ActionResult ListUsers()
         {
-            /*
-            var users = new List<ListViewModel>();
-            //var admin = (from r in db.Roles where r.Name.Contains("admin") select r).FirstOrDefault().Users.FirstOrDefault().UserId;
-            var admins = (from r in db.Roles where r.Name.Contains("admin") select r).FirstOrDefault().Users.ToList();
-
-
-            foreach (var user in db.Users)
-            {
-                //var minroll = (from r in db. where r.Name.Contains("admin") select r).FirstOrDefault();
-
-                users.Add(new ListViewModel()
-                {
-                    Id = user.Id,
-                    UserName = user.UserName,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    Role = admins.FirstOrDefault().UserId == user.Id ? "Teacher" : "Student"
-                });
-
-            }
-            */
 
             //var users = from u in db.Users
             //            from ur in u.Roles
@@ -372,31 +355,27 @@ namespace LMS.Controllers
             from ur in u.Roles
             join r in db.Roles on ur.RoleId equals r.Id
             where r.Name == "admin"
-            select new ListViewModel
+            select new
             {
                 Id = u.Id,
-                UserName = u.UserName,
-                FirstName = u.FirstName,
-                LastName = u.LastName,
-                Email = u.LastName,
                 Role = "Teacher"
             };
 
             var users =
             from u in db.Users
+            join a in admins on u.Id equals a.Id into r
+            from a in r.DefaultIfEmpty()
             select new ListViewModel
             {
                 Id = u.Id,
                 UserName = u.UserName,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
-                Email = u.LastName,
-                Role = null
+                Email = u.Email,
+                Role = a.Role ?? "Student"
             };
 
-            var list = users.Union(admins);
-
-            return View(list);
+            return View(users);
         }
 
         protected override void Dispose(bool disposing)
