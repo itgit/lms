@@ -161,6 +161,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ScheduleController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -171,6 +172,10 @@
     <Compile Include="Migrations\201508041328245_FirstName.cs" />
     <Compile Include="Migrations\201508041328245_FirstName.Designer.cs">
       <DependentUpon>201508041328245_FirstName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201508061248426_GroupId.cs" />
+    <Compile Include="Migrations\201508061248426_GroupId.Designer.cs">
+      <DependentUpon>201508061248426_GroupId.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -239,6 +244,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
     <Content Include="Views\Manage\EditUser.cshtml" />
+    <Content Include="Views\Schedule\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -256,6 +262,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201508041328245_FirstName.resx">
       <DependentUpon>201508041328245_FirstName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508061248426_GroupId.resx">
+      <DependentUpon>201508061248426_GroupId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

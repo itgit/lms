@@ -378,6 +378,7 @@ namespace LMS.Controllers
                 FirstName = model.FirstName, 
                 LastName = model.LastName,
                 PasswordHash = olduser.PasswordHash,
+                SecurityStamp = olduser.SecurityStamp,
                 PhoneNumber = olduser.PhoneNumber,
             };
 

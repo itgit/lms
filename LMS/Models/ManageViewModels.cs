@@ -92,19 +92,23 @@ namespace LMS.Models
 
     public class UserViewModel
     {
-        [Display(Name = "ID")]
         public string Id { get; set; }
 
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
+        [Required]
         [Display(Name = "Username")]
+        [RegularExpression("^[a-zA-Z0-9_]{5,}$")]
         public string UserName { get; set; }
 
+        [Required]
         [Display(Name = "First name")]
         public string FirstName { get; set; }
 
+        [Required]
         [Display(Name = "Last name")]
         public string LastName { get; set; }
 

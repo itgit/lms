@@ -71,7 +71,7 @@ namespace LMS.Models
 
         [Required]
         [DataType(DataType.Text)]
-        [RegularExpression("^[a-zA-Z0-9_]{6,}$")]
+        [RegularExpression("^[a-zA-Z0-9_]{5,}$")]
         [Display(Name = "Username")]
         public string UserName { get; set; }
 
