@@ -8,6 +8,9 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using LMS.Models;
 using System.Collections.Generic;
+using System.Net;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
 
 namespace LMS.Controllers
 {
@@ -55,28 +58,29 @@ namespace LMS.Controllers
 
         //
         // GET: /Manage/Index
-        public async Task<ActionResult> Index(ManageMessageId? message)
-        {
-            ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
-                : message == ManageMessageId.Error ? "An error has occurred."
-                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
-                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
-                : "";
 
-            var userId = User.Identity.GetUserId();
-            var model = new IndexViewModel
-            {
-                HasPassword = HasPassword(),
-                PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
-                TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
-                Logins = await UserManager.GetLoginsAsync(userId),
-                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
-            };
-            return View(model);
-        }
+        //public async Task<ActionResult> Index(ManageMessageId? message)
+        //{
+        //    ViewBag.StatusMessage =
+        //        message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
+        //        : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
+        //        : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
+        //        : message == ManageMessageId.Error ? "An error has occurred."
+        //        : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
+        //        : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+        //        : "";
+
+        //    var userId = User.Identity.GetUserId();
+        //    var model = new IndexViewModel
+        //    {
+        //        HasPassword = HasPassword(),
+        //        PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
+        //        TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
+        //        Logins = await UserManager.GetLoginsAsync(userId),
+        //        BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
+        //    };
+        //    return View(model);
+        //}
 
         //
         // POST: /Manage/RemoveLogin
@@ -323,12 +327,75 @@ namespace LMS.Controllers
             return result.Succeeded ? RedirectToAction("ManageLogins") : RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
         }
 
-        public ActionResult EditUsers()
+        // GET: CrewMembers/Edit/5
+        public ActionResult EditUser(string id)
         {
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var user = UserManager.FindById(id);
+            var roles = UserManager.GetRoles(id);
+
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            var viewitem = new ListViewModel()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Role = roles.Contains("admin") ? Role.Teacher : Role.Student,
+            };
+
+            return View(viewitem);
         }
 
-        public ActionResult ListUsers()
+        // POST: CrewMembers/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditUser(/*[Bind(Include = "id,username,email,firstname,lastname")] ApplicationUser user, Role role*/ ListViewModel model)
+        {
+            var olduser = UserManager.FindById(model.Id);
+            if(olduser == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var user = new ApplicationUser
+            {
+                Id = model.Id, 
+                UserName = model.UserName, 
+                Email = model.Email, 
+                FirstName = model.FirstName, 
+                LastName = model.LastName,
+                PasswordHash = olduser.PasswordHash,
+                PhoneNumber = olduser.PhoneNumber,
+            };
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(user).State = EntityState.Modified;
+                db.SaveChanges();
+                if (model.Role == Role.Teacher)
+                {                 
+                    UserManager.AddToRole(user.Id, "admin");
+                    db.SaveChanges();
+                }
+                return RedirectToAction("Index");
+            }
+            //ViewBag.airplaneserialnumber = new SelectList(db.Airplanes, "serialnumber", "model", crewMember.airplaneserialnumber);
+            return View(user);
+        }
+
+        public ActionResult Index() //List all users
         {
 
             //var users = from u in db.Users
@@ -358,7 +425,7 @@ namespace LMS.Controllers
             select new
             {
                 Id = u.Id,
-                Role = "Teacher"
+                Role = Role.Teacher,
             };
 
             var users =
@@ -372,7 +439,7 @@ namespace LMS.Controllers
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 Email = u.Email,
-                Role = a.Role ?? "Student"
+                Role = a.Role == null ? Role.Student : a.Role,
             };
 
             return View(users);

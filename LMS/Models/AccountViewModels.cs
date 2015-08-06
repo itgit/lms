@@ -71,6 +71,7 @@ namespace LMS.Models
 
         [Required]
         [DataType(DataType.Text)]
+        [RegularExpression("^[a-zA-Z0-9_]{6,}$")]
         [Display(Name = "Username")]
         public string UserName { get; set; }
 
@@ -94,6 +95,12 @@ namespace LMS.Models
         public string ConfirmPassword { get; set; }
     }
 
+    public enum Role
+    {
+        Student,
+        Teacher,
+    }
+
     public class ListViewModel
     {
         [Display(Name = "ID")]
@@ -103,21 +110,17 @@ namespace LMS.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [DataType(DataType.Text)]
         [Display(Name = "Username")]
         public string UserName { get; set; }
 
-        [DataType(DataType.Text)]
         [Display(Name = "First name")]
         public string FirstName { get; set; }
 
-        [DataType(DataType.Text)]
         [Display(Name = "Last name")]
         public string LastName { get; set; }
 
-        [DataType(DataType.Text)]
         [Display(Name = "Teacher/student")]
-        public string Role { get; set; }
+        public Role Role { get; set; }
     }
 
     public class ResetPasswordViewModel
