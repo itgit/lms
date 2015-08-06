@@ -343,14 +343,15 @@ namespace LMS.Controllers
                 return HttpNotFound();
             }
 
-            var viewitem = new ListViewModel()
+            var viewitem = new UserViewModel()
             {
                 Id = user.Id,
                 UserName = user.UserName,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Role = roles.Contains("admin") ? Role.Teacher : Role.Student,
+                //Role = roles.Contains("admin") ? Role.Teacher : Role.Student,
+                IsTeacher = roles.Contains("admin"),
             };
 
             return View(viewitem);
@@ -361,7 +362,7 @@ namespace LMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditUser(/*[Bind(Include = "id,username,email,firstname,lastname")] ApplicationUser user, Role role*/ ListViewModel model)
+        public ActionResult EditUser(/*[Bind(Include = "id,username,email,firstname,lastname")] ApplicationUser user, Role role*/ UserViewModel model)
         {
             var olduser = UserManager.FindById(model.Id);
             if(olduser == null)
@@ -384,7 +385,7 @@ namespace LMS.Controllers
             {
                 db.Entry(user).State = EntityState.Modified;
                 db.SaveChanges();
-                if (model.Role == Role.Teacher)
+                if (model.IsTeacher)
                 {                 
                     UserManager.AddToRole(user.Id, "admin");
                     db.SaveChanges();
@@ -432,7 +433,7 @@ namespace LMS.Controllers
             from u in db.Users
             join a in admins on u.Id equals a.Id into r
             from a in r.DefaultIfEmpty()
-            select new ListViewModel
+            select new UserViewModel
             {
                 Id = u.Id,
                 UserName = u.UserName,

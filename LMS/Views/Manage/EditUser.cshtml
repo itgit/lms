@@ -1,4 +1,4 @@
-﻿@model LMS.Models.ListViewModel
+﻿@model LMS.Models.UserViewModel
 
 @{
     ViewBag.Title = "EditUser";
@@ -50,10 +50,18 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.IsTeacher, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.Role, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
+                <div class="checkbox">
+                    @if (Model.IsTeacher)
+                    {
+                        @Html.CheckBoxFor(model => model.IsTeacher, new { @disabled = "disabled" })
+                    }
+                    else
+                    {
+                        @Html.CheckBoxFor(model => model.IsTeacher)
+                    }
+                </div>
             </div>
         </div>
 
