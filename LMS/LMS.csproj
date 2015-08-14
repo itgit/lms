@@ -159,23 +159,17 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ActivitiesController.cs" />
+    <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\ScheduleController.cs" />
+    <Compile Include="Controllers\SchedulesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201507311445071_InitialCreate.cs" />
-    <Compile Include="Migrations\201507311445071_InitialCreate.Designer.cs">
-      <DependentUpon>201507311445071_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201508041328245_FirstName.cs" />
-    <Compile Include="Migrations\201508041328245_FirstName.Designer.cs">
-      <DependentUpon>201508041328245_FirstName.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201508061248426_GroupId.cs" />
-    <Compile Include="Migrations\201508061248426_GroupId.Designer.cs">
-      <DependentUpon>201508061248426_GroupId.cs</DependentUpon>
+    <Compile Include="Migrations\201508141156152_activities.cs" />
+    <Compile Include="Migrations\201508141156152_activities.Designer.cs">
+      <DependentUpon>201508141156152_activities.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -244,10 +238,16 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
     <Content Include="Views\Manage\EditUser.cshtml" />
-    <Content Include="Views\Schedule\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Content Include="Views\Schedules\Index.cshtml" />
+    <Content Include="Views\Groups\Create.cshtml" />
+    <Content Include="Views\Groups\Delete.cshtml" />
+    <Content Include="Views\Groups\Edit.cshtml" />
+    <Content Include="Views\Groups\Index.cshtml" />
+    <Content Include="Views\Activities\Create.cshtml" />
+    <Content Include="Views\Activities\Delete.cshtml" />
+    <Content Include="Views\Activities\Details.cshtml" />
+    <Content Include="Views\Activities\Edit.cshtml" />
+    <Content Include="Views\Activities\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -257,14 +257,11 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201507311445071_InitialCreate.resx">
-      <DependentUpon>201507311445071_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508041328245_FirstName.resx">
-      <DependentUpon>201508041328245_FirstName.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508061248426_GroupId.resx">
-      <DependentUpon>201508061248426_GroupId.cs</DependentUpon>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201508141156152_activities.resx">
+      <DependentUpon>201508141156152_activities.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

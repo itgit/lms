@@ -7,49 +7,60 @@
 <h2>@ViewBag.Title</h2>
 
 <p>
-    @Html.ActionLink("Register new user", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })
+    @Html.ActionLink("Register new user", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" }) |
+    @Html.ActionLink("Manage groups", "Index", "Groups", routeValues: null, htmlAttributes: new { id = "groupLink" })
 </p>
-<table class="table">
-    <tr>
-        <th>
-            <b>@Html.DisplayNameFor(model => model.UserName)</b>
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Role)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            <b>@Html.DisplayFor(modelItem => item.UserName)</b>
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Role)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "EditUser", new { id=item.Id })
-        </td>
-    </tr>
+@foreach (var group in ViewBag.groups)
+{
+    <div class="panel panel-default">
+        <div class="panel-heading text-center"><p style="font-size:2em;">@(group.Name ?? "No group")</p></div>
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Role)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                if ((item.Group != null && item.Group.Id == group.Id) || (item.Group == null && group.Id == null))
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Role)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "EditUser", new { id = item.Id })
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
 }
-
-</table>

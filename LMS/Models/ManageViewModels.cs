@@ -117,5 +117,8 @@ namespace LMS.Models
 
         [Display(Name = "Convert to teacher?")]
         public bool IsTeacher { get; set; }
+
+        [Display(Name = "Group")]
+        public Group Group { get; set; }
     }
 }

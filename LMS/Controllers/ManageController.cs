@@ -350,9 +350,14 @@ namespace LMS.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
+                Group = user.Group,
                 //Role = roles.Contains("admin") ? Role.Teacher : Role.Student,
                 IsTeacher = roles.Contains("admin"),
             };
+
+            //ViewBag.group = viewitem.Group.Name;
+            ViewBag.groups = db.Groups.ToList();
+            //ViewBag.airplaneserialnumber = new SelectList(db.Groups, "serialnumber", "model", crewMember.airplaneserialnumber);
 
             return View(viewitem);
         }
@@ -380,6 +385,7 @@ namespace LMS.Controllers
                 PasswordHash = olduser.PasswordHash,
                 SecurityStamp = olduser.SecurityStamp,
                 PhoneNumber = olduser.PhoneNumber,
+                GroupId = model.Group.Id,
             };
 
             if (ModelState.IsValid)
@@ -394,6 +400,7 @@ namespace LMS.Controllers
                 return RedirectToAction("Index");
             }
             //ViewBag.airplaneserialnumber = new SelectList(db.Airplanes, "serialnumber", "model", crewMember.airplaneserialnumber);
+
             return View(user);
         }
 
@@ -434,6 +441,7 @@ namespace LMS.Controllers
             from u in db.Users
             join a in admins on u.Id equals a.Id into r
             from a in r.DefaultIfEmpty()
+            orderby u.UserName ascending
             select new UserViewModel
             {
                 Id = u.Id,
@@ -442,7 +450,13 @@ namespace LMS.Controllers
                 LastName = u.LastName,
                 Email = u.Email,
                 Role = a.Role == null ? Role.Student : a.Role,
+                Group = u.Group
             };
+
+            var groups = db.Groups.ToList();
+            groups.Add(new Group() { Name = "No group" });
+            groups = groups.OrderBy(o => o.Name).ToList();
+            ViewBag.groups = groups;
 
             return View(users);
         }

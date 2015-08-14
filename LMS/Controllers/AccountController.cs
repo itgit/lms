@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using LMS.Models;
+using System.Collections.Generic;
 
 namespace LMS.Controllers
 {
@@ -139,6 +140,17 @@ namespace LMS.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            var groups = (new ApplicationDbContext()).Groups.ToList();
+
+            if (groups != null)
+            {
+                ViewBag.groups = groups;
+            }
+            else
+            {
+                ViewBag.groups = (new List<Group>() { new Group() { Name = "No groups!" } }).ToList();
+            }
+
             return View();
         }
 
@@ -151,7 +163,7 @@ namespace LMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName };
+                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, GroupId = model.Group.Id };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
