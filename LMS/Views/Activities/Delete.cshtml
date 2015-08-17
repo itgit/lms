@@ -28,35 +28,19 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.StartTimeHours)
+            @Html.DisplayNameFor(model => model.StartTime)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.StartTimeHours)
+            @Html.DisplayFor(model => model.StartTime)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.StartTimeMinutes)
+            @Html.DisplayNameFor(model => model.EndTime)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.StartTimeMinutes)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.EndTimeHours)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.EndTimeHours)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.EndTimeMinutes)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.EndTimeMinutes)
+            @Html.DisplayFor(model => model.EndTime)
         </dd>
 
     </dl>
@@ -65,8 +49,8 @@
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+            <input type="submit" value="Delete" class="btn btn-default" />&nbsp;
+            @Html.ActionLink("Back to List", "Index", new { id = Request.Params["groupid"] }, null)
         </div>
     }
 </div>

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace LMS.Models
 {
@@ -18,10 +19,13 @@ namespace LMS.Models
             return userIdentity;
         }
 
+        [Display(Name = "First name")]
         public string FirstName { get; set; }
+        [Display(Name = "Last name")]
         public string LastName { get; set; }
         public int? GroupId { get; set; }
         [ForeignKey("GroupId")]
+        [Display(Name = "Group")]
         public virtual Group Group { get; set; }
     }
 
@@ -40,5 +44,7 @@ namespace LMS.Models
         public System.Data.Entity.DbSet<LMS.Models.Group> Groups { get; set; }
 
         public System.Data.Entity.DbSet<LMS.Models.Activity> Activities { get; set; }
+
+        public System.Data.Entity.DbSet<LMS.Models.File> Files { get; set; }
     }
 }

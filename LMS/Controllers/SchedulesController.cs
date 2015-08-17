@@ -25,7 +25,7 @@ namespace LMS.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Group not found");
             }
 
-            if (group.Activities == null)
+            if (group.Activities.Count() == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound, "No activities found for this group ");
             }
@@ -47,8 +47,9 @@ namespace LMS.Controllers
 
             ViewBag.last = last;
             ViewBag.first = first;
+            ViewBag.groupid = id;
+            ViewBag.groupname = group.Name;
 
-            ViewBag.id = id;
             return View(group.Activities);
         }
     }

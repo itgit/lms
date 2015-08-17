@@ -144,6 +144,7 @@ namespace LMS.Migrations
                 "Lisbeth",
                 "Mona",
                 "Solveig",
+
                 // Förnamn, män
                 "Karl",
                 "Erik",

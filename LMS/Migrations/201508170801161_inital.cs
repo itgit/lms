@@ -3,7 +3,7 @@ namespace LMS.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class initial : DbMigration
+    public partial class inital : DbMigration
     {
         public override void Up()
         {
@@ -14,15 +14,13 @@ namespace LMS.Migrations
                         Id = c.Int(nullable: false, identity: true),
                         Name = c.String(),
                         Day = c.Int(nullable: false),
-                        StartTimeHours = c.Int(nullable: false),
-                        StartTimeMinutes = c.Int(nullable: false),
-                        EndTimeHours = c.Int(nullable: false),
-                        EndTimeMinutes = c.Int(nullable: false),
-                        Group_Id = c.Int(),
+                        StartTime = c.Time(nullable: false, precision: 7),
+                        EndTime = c.Time(nullable: false, precision: 7),
+                        GroupId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Groups", t => t.Group_Id)
-                .Index(t => t.Group_Id);
+                .ForeignKey("dbo.Groups", t => t.GroupId, cascadeDelete: true)
+                .Index(t => t.GroupId);
             
             CreateTable(
                 "dbo.Groups",
@@ -115,7 +113,7 @@ namespace LMS.Migrations
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUsers", "GroupId", "dbo.Groups");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.Activities", "Group_Id", "dbo.Groups");
+            DropForeignKey("dbo.Activities", "GroupId", "dbo.Groups");
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
@@ -123,7 +121,7 @@ namespace LMS.Migrations
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.AspNetUsers", new[] { "GroupId" });
-            DropIndex("dbo.Activities", new[] { "Group_Id" });
+            DropIndex("dbo.Activities", new[] { "GroupId" });
             DropTable("dbo.AspNetRoles");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetUserLogins");

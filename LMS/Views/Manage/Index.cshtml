@@ -14,8 +14,8 @@
 @if (Model.Where(g => g.Group == null).Count() > 0)
 {
     <div class="panel panel-danger">
-        <div class="panel-heading text-center">
-            <p style="font-size:2em;">Not assigned to group</p>
+        <div class="panel-heading">
+            <span style="font-size:2em;">Not assigned to group</span>
         </div>
         <table class="table">
             <tr>
@@ -67,8 +67,16 @@
 @foreach (var group in ViewBag.groups)
 {
     <div class="panel panel-success">
-        <div class="panel-heading text-center">
-            <p style="font-size:2em;"><a href="@Url.Action("Index", "Activities", new { id = group.Id }, null)">@group.Name</a></p>
+        <div class="panel-heading">
+            <span style="font-size:2em;">@group.Name</span>
+            <span style="float:right;">
+                @Html.ActionLink("Activities", "Index", "Activities", new { id = group.Id }, null)
+                @if (((LMS.Models.Group)group).Activities.Count() > 0)
+                {
+                    <span> | </span>
+                    @Html.ActionLink("Schedule", "Index", "Schedules", new { id = group.Id }, null)
+                }
+            </span>
         </div>
         <table class="table">
             <tr>
@@ -116,4 +124,5 @@
         </table>
     </div>
 }
+
 

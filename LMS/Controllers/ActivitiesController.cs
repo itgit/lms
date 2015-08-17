@@ -76,6 +76,23 @@ namespace LMS.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (activity.StartTime >= activity.EndTime)
+                {
+                    ViewBag.errormessage = "An activity cannot end before it starts!";
+                    return View(activity);  // Illegal activity
+                }
+                foreach (var otheractivity in db.Activities.Where(a => a.GroupId == activity.GroupId))
+                {
+                    if (activity.Day == otheractivity.Day)
+                    {
+                        if ((activity.StartTime >= otheractivity.StartTime && activity.StartTime < otheractivity.EndTime) ||
+                            (activity.EndTime > otheractivity.StartTime && activity.EndTime <= otheractivity.EndTime))
+                        {
+                            ViewBag.errormessage = "This time period is already taken by another activity (" + otheractivity.Name + " " + otheractivity.StartTime + "-" + otheractivity.EndTime + ")!";
+                            return View(activity);  // Illegal activity
+                        }
+                    }
+                }
                 db.Activities.Add(activity);
                 db.SaveChanges();
                 return RedirectToAction("Index", new { id = activity.GroupId });
@@ -138,7 +155,7 @@ namespace LMS.Controllers
             Activity activity = db.Activities.Find(id);
             db.Activities.Remove(activity);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { id = activity.GroupId });
         }
 
         protected override void Dispose(bool disposing)

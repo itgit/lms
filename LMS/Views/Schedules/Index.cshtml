@@ -6,150 +6,189 @@
 
 <br />
 <br />
-<h2>Schedule</h2>
+<h2>Schedule for @ViewBag.groupname</h2>
 
-@Html.ActionLink("Edit schedule", "Index", "Activities", new { id = ViewBag.id }, null)
+@Html.ActionLink("Edit schedule", "Index", "Activities", new { id = ViewBag.groupid }, null)
 
-<canvas id="schedule" width="900" height="1100"></canvas>
+<canvas id="schedule" class="col-xs-12"></canvas>
 
-<script>
-    var c = document.getElementById("schedule");
-    var ctx = c.getContext("2d");
-    var leftMarginWidth = c.width / 14;
-    var topMarginHeight = 40;
-    var rightMarginWidth = 10;
-    var bottomMarginWidth = 10;
-    var scheduleWidth = c.width - leftMarginWidth - rightMarginWidth;
-    var scheduleHeight = c.height - topMarginHeight - bottomMarginWidth;
-    var fontSize = 16;
-    var hoursInDay = @(ViewBag.last - ViewBag.first);
-    var startTime = @ViewBag.first;
+@section scripts
+{
+    <script src="https://rawgit.com/maciej-gurban/responsive-bootstrap-toolkit/master/dist/bootstrap-toolkit.min.js"></script>
+    <script>
 
-    var activities = [];
+        (function ($, document, window, viewport) {
+            $(document).ready(function () {
+                if (viewport.current() == 'lg')
+                    c.width = 1450;
+                else if(viewport.current() == 'md')
+                    c.width = 1200;
+                else if(viewport.current() == 'sm')
+                    c.width = 992;
+                else if(viewport.current() == 'xs')
+                    c.width = 768;
+                c.height = 1.2 * c.width;
+                scheduleWidth = c.width - leftMarginWidth - rightMarginWidth;
+                scheduleHeight = c.height - topMarginHeight - bottomMarginWidth;
+                drawSchedule();
+            });
+            $(window).resize(viewport.changed(function () {
+                if (viewport.current() == 'lg')
+                    c.width = 1450;
+                else if(viewport.current() == 'md')
+                    c.width = 1200;
+                else if(viewport.current() == 'sm')
+                    c.width = 992;
+                else if(viewport.current() == 'xs')
+                    c.width = 768;
+                c.height = 1.2 * c.width;
+                scheduleWidth = c.width - leftMarginWidth - rightMarginWidth;
+                scheduleHeight = c.height - topMarginHeight - bottomMarginWidth;
+                drawSchedule();
+                console.log('Current breakpoint:', viewport.current());
+            }));
+        }(jQuery, document, window, ResponsiveBootstrapToolkit));
+    </script>
 
-    (function () {
-        ctx.translate(leftMarginWidth, topMarginHeight);
+    <script>
+        var c = document.getElementById("schedule");
+        var ctx = c.getContext("2d");
+        var topMarginHeight = 40;
+        var rightMarginWidth = 10;
+        var bottomMarginWidth = 10;
+        var scheduleWidth = c.width - leftMarginWidth - rightMarginWidth;
+        var scheduleHeight = c.height - topMarginHeight - bottomMarginWidth;
+        var fontSize = 20;
+        var leftMarginWidth = fontSize * 3;
+        var hoursInDay = @(ViewBag.last - ViewBag.first);
+        var startTime = @ViewBag.first;
 
-        var dayOfWeek =
-            [
-                "Måndag",
-                "Tisdag",
-                "Onsdag",
-                "Torsdag",
-                "Fredag",
-                "Lördag",
-                "Söndag"
-            ];
+        var activities = [];
 
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, -topMarginHeight * 0.75, scheduleWidth, topMarginHeight * 0.75);
+        function drawSchedule() {
+            ctx.translate(leftMarginWidth, topMarginHeight);
 
-        ctx.fillStyle = "#e0e0e0";
-        ctx.fillRect(0, 0, scheduleWidth, scheduleHeight);
+            var dayOfWeek =
+                [
+                    "Måndag",
+                    "Tisdag",
+                    "Onsdag",
+                    "Torsdag",
+                    "Fredag",
+                    "Lördag",
+                    "Söndag"
+                ];
 
-        ctx.strokeStyle = "#000000";
-        ctx.lineWidth = 1;
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, -topMarginHeight * 0.75, scheduleWidth, topMarginHeight * 0.75);
 
-        ctx.beginPath();
-        ctx.moveTo(0, -topMarginHeight * 0.75);
-        ctx.lineTo(scheduleWidth, -topMarginHeight * 0.75);
-        ctx.stroke();
+            ctx.fillStyle = "#e0e0e0";
+            ctx.fillRect(0, 0, scheduleWidth, scheduleHeight);
 
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(scheduleWidth, 0);
-        ctx.stroke();
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 1;
 
-        ctx.beginPath();
-        ctx.moveTo(scheduleWidth, -topMarginHeight * 0.75);
-        ctx.lineTo(scheduleWidth, scheduleHeight);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(0, scheduleHeight);
-        ctx.lineTo(scheduleWidth, scheduleHeight);
-        ctx.stroke();
-
-        ctx.fillStyle = "#000000";
-        ctx.font = fontSize + "px Times";
-        ctx.textAlign = "right";
-
-        for (time = 0; time < hoursInDay + 1; time++) {
             ctx.beginPath();
-            ctx.moveTo(-12, time * (scheduleHeight / hoursInDay));
-            ctx.lineTo(0, time * (scheduleHeight / hoursInDay));
+            ctx.moveTo(0, -topMarginHeight * 0.75);
+            ctx.lineTo(scheduleWidth, -topMarginHeight * 0.75);
             ctx.stroke();
-            ctx.fillText(timeString(time + startTime, 0), -15, time * (scheduleHeight / hoursInDay) + fontSize * 0.25);
-
-            if (time == hoursInDay)
-                break;
 
             ctx.beginPath();
-            ctx.moveTo(-6, (time + (1 / 3)) * (scheduleHeight / hoursInDay));
-            ctx.lineTo(0, (time + (1 / 3)) * (scheduleHeight / hoursInDay));
+            ctx.moveTo(0, 0);
+            ctx.lineTo(scheduleWidth, 0);
             ctx.stroke();
-            ctx.fillText("20", -15, (time + (1 / 3)) * (scheduleHeight / hoursInDay) + fontSize * 0.25);
 
             ctx.beginPath();
-            ctx.moveTo(-6, (time + (2 / 3)) * (scheduleHeight / hoursInDay));
-            ctx.lineTo(0, (time + (2 / 3)) * (scheduleHeight / hoursInDay));
+            ctx.moveTo(scheduleWidth, -topMarginHeight * 0.75);
+            ctx.lineTo(scheduleWidth, scheduleHeight);
             ctx.stroke();
-            ctx.fillText("40", -15, (time + (2 / 3)) * (scheduleHeight / hoursInDay) + fontSize * 0.25);
-        }
 
-        for (day = 0; day < 5; day++) {
             ctx.beginPath();
-            ctx.moveTo(day * (scheduleWidth / 5), -topMarginHeight * 0.75);
-            ctx.lineTo(day * (scheduleWidth / 5), scheduleHeight);
+            ctx.moveTo(0, scheduleHeight);
+            ctx.lineTo(scheduleWidth, scheduleHeight);
             ctx.stroke();
 
             ctx.fillStyle = "#000000";
-            ctx.font = Math.round(fontSize * 1.25) + "px Times";
-            ctx.textAlign = "center";
-            ctx.fillText(dayOfWeek[day], (day + 0.5) * (scheduleWidth / 5), -topMarginHeight * 0.5 + fontSize * 0.625, (scheduleWidth) / 5);
-        }
+            ctx.font = fontSize + "px Times";
+            ctx.textAlign = "right";
 
-        @foreach (var activity in Model)
+            for (time = 0; time < hoursInDay + 1; time++) {
+                ctx.beginPath();
+                ctx.moveTo(-12, time * (scheduleHeight / hoursInDay));
+                ctx.lineTo(0, time * (scheduleHeight / hoursInDay));
+                ctx.stroke();
+                ctx.fillText(timeString(time + startTime, 0), -15, time * (scheduleHeight / hoursInDay) + fontSize * 0.25);
+
+                if (time == hoursInDay)
+                    break;
+
+                ctx.beginPath();
+                ctx.moveTo(-6, (time + (1 / 3)) * (scheduleHeight / hoursInDay));
+                ctx.lineTo(0, (time + (1 / 3)) * (scheduleHeight / hoursInDay));
+                ctx.stroke();
+                ctx.fillText("20", -15, (time + (1 / 3)) * (scheduleHeight / hoursInDay) + fontSize * 0.25);
+
+                ctx.beginPath();
+                ctx.moveTo(-6, (time + (2 / 3)) * (scheduleHeight / hoursInDay));
+                ctx.lineTo(0, (time + (2 / 3)) * (scheduleHeight / hoursInDay));
+                ctx.stroke();
+                ctx.fillText("40", -15, (time + (2 / 3)) * (scheduleHeight / hoursInDay) + fontSize * 0.25);
+            }
+
+            for (day = 0; day < 5; day++) {
+                ctx.beginPath();
+                ctx.moveTo(day * (scheduleWidth / 5), -topMarginHeight * 0.75);
+                ctx.lineTo(day * (scheduleWidth / 5), scheduleHeight);
+                ctx.stroke();
+
+                ctx.fillStyle = "#000000";
+                ctx.font = Math.round(fontSize * 1.25) + "px Times";
+                ctx.textAlign = "center";
+                ctx.fillText(dayOfWeek[day], (day + 0.5) * (scheduleWidth / 5), -topMarginHeight * 0.5 + fontSize * 0.625, (scheduleWidth) / 5);
+            }
+
+            @foreach (var activity in Model)
         {
             var line = string.Format("drawActivity({0}, {1}, {2}, {3}, {4}, \"{5}\");" + Environment.NewLine, (int)activity.Day, activity.StartTime.Hours, activity.StartTime.Minutes, activity.EndTime.Hours, activity.EndTime.Minutes, activity.Name);
             @Html.Raw(line)
         }
 
-        @*drawActivity(0, 8, 0, 9, 45, "Matematik");
+            @*drawActivity(0, 8, 0, 9, 45, "Matematik");
         drawActivity(1, 9, 30, 11, 15, "Fysik");
         drawActivity(2, 11, 0, 12, 45, "Gymnastik");
         drawActivity(3, 12, 30, 14, 15, "Svenska");
         drawActivity(4, 14, 0, 15, 45, "Engelska");*@
-    })();
+        };
 
-    function drawActivity(day, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute, description) {
-        var startTimeHeight = (scheduleHeight / hoursInDay) * (startTimeHour - startTime + startTimeMinute / 60);
-        var endTimeHeight = (scheduleHeight / hoursInDay) * (endTimeHour - startTime + endTimeMinute / 60);
-        ctx.fillStyle = "#ffffff";
-        ctx.strokeStyle = "#000000";
-        ctx.fillRect(day * (scheduleWidth / 5), startTimeHeight, scheduleWidth / 5, endTimeHeight - startTimeHeight);
-        ctx.strokeRect(day * (scheduleWidth / 5), startTimeHeight, scheduleWidth / 5, endTimeHeight - startTimeHeight);
-        ctx.font = Math.round(fontSize * 0.75) + "px Times";
-        ctx.textAlign = "left";
-        var header = timeString(startTimeHour, startTimeMinute);
-        var textWidth = ctx.measureText(header).width;
-        ctx.fillRect(day * (scheduleWidth / 5) + 10, startTimeHeight - fontSize * 0.5, textWidth + 10, fontSize);
-        ctx.fillStyle = "#000000";
-        ctx.fillText(header, day * (scheduleWidth / 5) + 15, startTimeHeight + fontSize * 0.25);
-        var footer = timeString(endTimeHour, endTimeMinute);
-        textWidth = ctx.measureText(footer).width;
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect((day + 1) * (scheduleWidth / 5) - 20 - textWidth, endTimeHeight - fontSize * 0.5, textWidth + 10, fontSize);
-        ctx.fillStyle = "#000000";
-        ctx.fillText(footer, (day + 1) * (scheduleWidth / 5) - textWidth - 15, endTimeHeight + fontSize * 0.25);
-        ctx.font = Math.round(fontSize * 1.25) + "px Times";
-        ctx.textAlign = "center";
-        ctx.fillText(description, (day + 0.5) * (scheduleWidth / 5), (startTimeHeight + endTimeHeight) * 0.5 + fontSize * 0.3125);
-        activities.push();
-    }
+        function drawActivity(day, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute, description) {
+            var startTimeHeight = (scheduleHeight / hoursInDay) * (startTimeHour - startTime + startTimeMinute / 60);
+            var endTimeHeight = (scheduleHeight / hoursInDay) * (endTimeHour - startTime + endTimeMinute / 60);
+            ctx.fillStyle = "#ffffff";
+            ctx.strokeStyle = "#000000";
+            ctx.fillRect(day * (scheduleWidth / 5), startTimeHeight, scheduleWidth / 5, endTimeHeight - startTimeHeight);
+            ctx.strokeRect(day * (scheduleWidth / 5), startTimeHeight, scheduleWidth / 5, endTimeHeight - startTimeHeight);
+            ctx.font = Math.round(fontSize * 0.75) + "px Times";
+            ctx.textAlign = "left";
+            var header = timeString(startTimeHour, startTimeMinute);
+            var textWidth = ctx.measureText(header).width;
+            ctx.fillRect(day * (scheduleWidth / 5) + 10, startTimeHeight - fontSize * 0.5, textWidth + 10, fontSize);
+            ctx.fillStyle = "#000000";
+            ctx.fillText(header, day * (scheduleWidth / 5) + 15, startTimeHeight + fontSize * 0.25);
+            var footer = timeString(endTimeHour, endTimeMinute);
+            textWidth = ctx.measureText(footer).width;
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect((day + 1) * (scheduleWidth / 5) - 20 - textWidth, endTimeHeight - fontSize * 0.5, textWidth + 10, fontSize);
+            ctx.fillStyle = "#000000";
+            ctx.fillText(footer, (day + 1) * (scheduleWidth / 5) - textWidth - 15, endTimeHeight + fontSize * 0.25);
+            ctx.font = Math.round(fontSize * 1.25) + "px Times";
+            ctx.textAlign = "center";
+            ctx.fillText(description, (day + 0.5) * (scheduleWidth / 5), (startTimeHeight + endTimeHeight) * 0.5 + fontSize * 0.3125);
+            activities.push();
+        }
 
-    function timeString(hour, minute) {
-        return ('0' + hour).slice(-2) + ':' + ('0' + minute).slice(-2);
-    }
+        function timeString(hour, minute) {
+            return ('0' + hour).slice(-2) + ':' + ('0' + minute).slice(-2);
+        }
 
-</script>
+    </script>
+}

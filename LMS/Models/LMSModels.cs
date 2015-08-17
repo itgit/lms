@@ -16,23 +16,26 @@ namespace LMS.Models
         public virtual ICollection<Activity> Activities { get; set; }
 
         public virtual ICollection<ApplicationUser> Users { get; set; }
+
+        public virtual ICollection<File> Files { get; set; }
     }
 
     public class File
     {
         [Key]
-        public int Id { get; set; }
-
-        public string FilePath { get; set; } // sökväg exlusive filnamn
-        public string FileName { get; set; } // filnamn extern
-        private string FileNameInternal { get; set; } // filnamn intern
-        //public int GroupId { get; set; } // en fil kan tillhöra en grupp 
-
-
-        //Connection
-        [ForeignKey("Id")]
-        public int UserId { get; set; } // en fil kan tillhöra en användare
-
+        public string Id { get; set; }
+        [Display(Name="File name")]
+        public string FileName { get; set; }
+        [Display(Name = "File path")]
+        public string FilePath { get; set; }
+        public string UserId { get; set; }
+        [ForeignKey("UserId")]
+        [Display(Name = "User")]
+        public virtual ApplicationUser User { get; set; }
+        public int? GroupId { get; set; }
+        [ForeignKey("GroupId")]
+        [Display(Name = "Group")]
+        public virtual Group Group { get; set; }
     }
 
     public enum Day
@@ -55,29 +58,21 @@ namespace LMS.Models
         public string Name { get; set; }
         [Display(Name = "Day")]
         public Day Day { get; set; }
-        //public int StartTimeHours { get; set; }
-        //public int StartTimeMinutes { get; set; }
-        //public int EndTimeHours { get; set; }
-        //public int EndTimeMinutes { get; set; }
 
-        [Display(Name = "Starts at")]
+        [Display(Name = "Start time")]
         [DataType(DataType.Time)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = @"{0:hh\:mm}")]
         public TimeSpan StartTime { get; set; }
 
-        [Display(Name = "Ends at")]
+        [Display(Name = "End time")]
         [DataType(DataType.Time)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = @"{0:hh\:mm}")]
         public TimeSpan EndTime { get; set; }
 
-        //[Display(Name = "Starts at")]
-        //public string StartTime { get { return string.Format("{0:00}:{1:00}", StartTimeHours, StartTimeMinutes); } }
-        //[Display(Name = "Ends at")]
-        //public string EndTime { get { return string.Format("{0:00}:{1:00}", EndTimeHours, EndTimeMinutes); } }
-
         [Required]
         public int GroupId { get; set; }
         [ForeignKey("GroupId")]
+        [Display(Name = "Group")]
         public virtual Group Group { get; set; }
     }
 
