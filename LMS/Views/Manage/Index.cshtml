@@ -39,7 +39,7 @@
 
             @foreach (var user in Model.Where(u => u.Group == null))
             {
-                <tr>
+                <tr @(user.Role == LMS.Models.Role.Teacher ? "class=warning" : "")>
                     <td>
                         @Html.DisplayFor(modelItem => user.UserName)
                     </td>
@@ -92,7 +92,7 @@
 
             @foreach (var user in Model.Where(u => u.Group == group))
             {
-                <tr>
+                <tr @(user.Role == LMS.Models.Role.Teacher ? "class=warning" : "")>
                     <td>
                         @Html.DisplayFor(modelItem => user.UserName)
                     </td>

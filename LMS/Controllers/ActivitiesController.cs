@@ -54,15 +54,16 @@ namespace LMS.Controllers
         // GET: Activities/Create
         public ActionResult Create(int? id)
         {
-            if (id != null)
+            if (id == null)
             {
-                var group = db.Groups.Find(id);
-                if (group == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Group not found");
-                }
-                ViewBag.groupname = group.Name;
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Can't create activity without group");
             }
+            var group = db.Groups.Find(id);
+            if (group == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Group not found");
+            }
+            ViewBag.groupname = group.Name;
             return View();
         }
 

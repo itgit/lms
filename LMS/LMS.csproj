@@ -181,6 +181,10 @@
     <Compile Include="Migrations\201508162148167_time.Designer.cs">
       <DependentUpon>201508162148167_time.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201508170016035_required.cs" />
+    <Compile Include="Migrations\201508170016035_required.Designer.cs">
+      <DependentUpon>201508170016035_required.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -278,6 +282,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201508162148167_time.resx">
       <DependentUpon>201508162148167_time.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508170016035_required.resx">
+      <DependentUpon>201508170016035_required.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

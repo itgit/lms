@@ -75,7 +75,8 @@ namespace LMS.Models
         //[Display(Name = "Ends at")]
         //public string EndTime { get { return string.Format("{0:00}:{1:00}", EndTimeHours, EndTimeMinutes); } }
 
-        public int? GroupId { get; set; }
+        [Required]
+        public int GroupId { get; set; }
         [ForeignKey("GroupId")]
         public virtual Group Group { get; set; }
     }
