@@ -6,14 +6,14 @@ namespace LMS.Migrations
     using System.Data.Entity.Migrations.Infrastructure;
     using System.Resources;
     
-    [GeneratedCode("EntityFramework.Migrations", "6.1.1-30610")]
-    public sealed partial class activities : IMigrationMetadata
+    [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
+    public sealed partial class time : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(activities));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(time));
         
         string IMigrationMetadata.Id
         {
-            get { return "201508141156152_activities"; }
+            get { return "201508162148167_time"; }
         }
         
         string IMigrationMetadata.Source

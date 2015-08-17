@@ -8,6 +8,8 @@
 <br />
 <h2>Schedule</h2>
 
+@Html.ActionLink("Edit schedule", "Index", "Activities", new { id = ViewBag.id }, null)
+
 <canvas id="schedule" width="900" height="1100"></canvas>
 
 <script>
@@ -22,6 +24,8 @@
     var fontSize = 16;
     var hoursInDay = @(ViewBag.last - ViewBag.first);
     var startTime = @ViewBag.first;
+
+    var activities = [];
 
     (function () {
         ctx.translate(leftMarginWidth, topMarginHeight);
@@ -107,8 +111,8 @@
 
         @foreach (var activity in Model)
         {
-            var hej = string.Format("drawActivity({0}, {1}, {2}, {3}, {4}, \"{5}\");\r\n", (int)activity.Day, activity.StartTimeHours, activity.StartTimeMinutes, activity.EndTimeHours, activity.EndTimeMinutes, activity.Name);
-            @Html.Raw(hej)
+            var line = string.Format("drawActivity({0}, {1}, {2}, {3}, {4}, \"{5}\");" + Environment.NewLine, (int)activity.Day, activity.StartTime.Hours, activity.StartTime.Minutes, activity.EndTime.Hours, activity.EndTime.Minutes, activity.Name);
+            @Html.Raw(line)
         }
 
         @*drawActivity(0, 8, 0, 9, 45, "Matematik");
@@ -141,6 +145,7 @@
         ctx.font = Math.round(fontSize * 1.25) + "px Times";
         ctx.textAlign = "center";
         ctx.fillText(description, (day + 0.5) * (scheduleWidth / 5), (startTimeHeight + endTimeHeight) * 0.5 + fontSize * 0.3125);
+        activities.push();
     }
 
     function timeString(hour, minute) {

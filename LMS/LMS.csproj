@@ -39,6 +39,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -106,12 +114,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.1.0\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
@@ -167,9 +169,17 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508141156152_activities.cs" />
-    <Compile Include="Migrations\201508141156152_activities.Designer.cs">
-      <DependentUpon>201508141156152_activities.cs</DependentUpon>
+    <Compile Include="Migrations\201508161909552_initial.cs" />
+    <Compile Include="Migrations\201508161909552_initial.Designer.cs">
+      <DependentUpon>201508161909552_initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201508162114572_activities.cs" />
+    <Compile Include="Migrations\201508162114572_activities.Designer.cs">
+      <DependentUpon>201508162114572_activities.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201508162148167_time.cs" />
+    <Compile Include="Migrations\201508162148167_time.Designer.cs">
+      <DependentUpon>201508162148167_time.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -260,8 +270,14 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201508141156152_activities.resx">
-      <DependentUpon>201508141156152_activities.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508161909552_initial.resx">
+      <DependentUpon>201508161909552_initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508162114572_activities.resx">
+      <DependentUpon>201508162114572_activities.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508162148167_time.resx">
+      <DependentUpon>201508162148167_time.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

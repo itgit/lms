@@ -453,9 +453,9 @@ namespace LMS.Controllers
                 Group = u.Group
             };
 
-            var groups = db.Groups.ToList();
-            groups.Add(new Group() { Name = "No group" });
-            groups = groups.OrderBy(o => o.Name).ToList();
+            //var groups = db.Groups.ToList();
+            //groups.Add(new Group() { Name = "No group" });
+            var groups = db.Groups.OrderBy(g => g.Name).ToList();
             ViewBag.groups = groups;
 
             return View(users);

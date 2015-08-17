@@ -11,10 +11,12 @@
     @Html.ActionLink("Manage groups", "Index", "Groups", routeValues: null, htmlAttributes: new { id = "groupLink" })
 </p>
 
-@foreach (var group in ViewBag.groups)
+@if (Model.Where(g => g.Group == null).Count() > 0)
 {
-    <div class="panel panel-default">
-        <div class="panel-heading text-center"><p style="font-size:2em;">@(group.Name ?? "No group")</p></div>
+    <div class="panel panel-danger">
+        <div class="panel-heading text-center">
+            <p style="font-size:2em;">Not assigned to group</p>
+        </div>
         <table class="table">
             <tr>
                 <th>
@@ -35,32 +37,83 @@
                 <th></th>
             </tr>
 
-            @foreach (var item in Model)
+            @foreach (var user in Model.Where(u => u.Group == null))
             {
-                if ((item.Group != null && item.Group.Id == group.Id) || (item.Group == null && group.Id == null))
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.UserName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.FirstName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.LastName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Email)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Role)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Edit", "EditUser", new { id = item.Id })
-                        </td>
-                    </tr>
-                }
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => user.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => user.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => user.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => user.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => user.Role)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "EditUser", new { id = user.Id })
+                    </td>
+                </tr>
             }
         </table>
     </div>
 }
+
+@foreach (var group in ViewBag.groups)
+{
+    <div class="panel panel-success">
+        <div class="panel-heading text-center">
+            <p style="font-size:2em;"><a href="@Url.Action("Index", "Activities", new { id = group.Id }, null)">@group.Name</a></p>
+        </div>
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Role)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var user in Model.Where(u => u.Group == group))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => user.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => user.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => user.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => user.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => user.Role)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "EditUser", new { id = user.Id })
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+

@@ -15,9 +15,25 @@ namespace LMS.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Activities
-        public ActionResult Index()
+        public ActionResult Index(int? id)
         {
-            return View(db.Activities.ToList());
+            if (id == null)
+            {
+                if (db.Activities != null)
+                {
+                    ViewBag.groups = db.Groups.Where(g => g.Activities.Count() > 0).OrderBy(g => g.Name).ToList();
+                    return View(db.Activities.OrderBy(a => (int)a.Day * 1440 + a.StartTime.Hours * 60 + a.StartTime.Minutes).ToList());
+                }
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound, "No activities found");
+            }
+            var group = db.Groups.Find(id);
+            if (group == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Group not found");
+            }
+            ViewBag.groupid = id;
+            ViewBag.groups = new List<Group>() { db.Groups.Find(id) };
+            return View(group.Activities.OrderBy(a => (int)a.Day * 1440 + a.StartTime.Hours * 60 + a.StartTime.Minutes).ToList());
         }
 
         // GET: Activities/Details/5
@@ -36,8 +52,17 @@ namespace LMS.Controllers
         }
 
         // GET: Activities/Create
-        public ActionResult Create()
+        public ActionResult Create(int? id)
         {
+            if (id != null)
+            {
+                var group = db.Groups.Find(id);
+                if (group == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Group not found");
+                }
+                ViewBag.groupname = group.Name;
+            }
             return View();
         }
 
@@ -46,13 +71,13 @@ namespace LMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Day,StartTimeHours,StartTimeMinutes,EndTimeHours,EndTimeMinutes")] Activity activity)
+        public ActionResult Create([Bind(Include = "Id,Name,Day,StartTime,EndTime,GroupId")] Activity activity)
         {
             if (ModelState.IsValid)
             {
                 db.Activities.Add(activity);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { id = activity.GroupId });
             }
 
             return View(activity);
@@ -78,13 +103,13 @@ namespace LMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Day,StartTimeHours,StartTimeMinutes,EndTimeHours,EndTimeMinutes")] Activity activity)
+        public ActionResult Edit([Bind(Include = "Id,Name,Day,StartTime,EndTime,GroupId")] Activity activity)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(activity).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { id = activity.GroupId });
             }
             return View(activity);
         }

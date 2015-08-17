@@ -42,8 +42,8 @@ namespace LMS.Models
         Wednesday,
         Thursday,
         Friday,
-        Saturday,
-        Sunday
+        //Saturday,
+        //Sunday
     };
 
     public class Activity
@@ -55,15 +55,29 @@ namespace LMS.Models
         public string Name { get; set; }
         [Display(Name = "Day")]
         public Day Day { get; set; }
-        public int StartTimeHours { get; set; }
-        public int StartTimeMinutes { get; set; }
-        public int EndTimeHours { get; set; }
-        public int EndTimeMinutes { get; set; }
+        //public int StartTimeHours { get; set; }
+        //public int StartTimeMinutes { get; set; }
+        //public int EndTimeHours { get; set; }
+        //public int EndTimeMinutes { get; set; }
 
         [Display(Name = "Starts at")]
-        public string StartTime { get { return string.Format("{0:00}:{1:00}", StartTimeHours, StartTimeMinutes); } }
+        [DataType(DataType.Time)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = @"{0:hh\:mm}")]
+        public TimeSpan StartTime { get; set; }
+
         [Display(Name = "Ends at")]
-        public string EndTime { get { return string.Format("{0:00}:{1:00}", EndTimeHours, EndTimeMinutes); } }
+        [DataType(DataType.Time)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = @"{0:hh\:mm}")]
+        public TimeSpan EndTime { get; set; }
+
+        //[Display(Name = "Starts at")]
+        //public string StartTime { get { return string.Format("{0:00}:{1:00}", StartTimeHours, StartTimeMinutes); } }
+        //[Display(Name = "Ends at")]
+        //public string EndTime { get { return string.Format("{0:00}:{1:00}", EndTimeHours, EndTimeMinutes); } }
+
+        public int? GroupId { get; set; }
+        [ForeignKey("GroupId")]
+        public virtual Group Group { get; set; }
     }
 
 }
