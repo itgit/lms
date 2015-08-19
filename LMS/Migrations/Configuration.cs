@@ -10,6 +10,7 @@ namespace LMS.Migrations
     using System.Globalization;
     using System.Linq;
     using System.Text;
+    using ExtensionMethods;
 
     internal sealed class Configuration : DbMigrationsConfiguration<LMS.Models.ApplicationDbContext>
     {
@@ -17,19 +18,6 @@ namespace LMS.Migrations
         {
             AutomaticMigrationsEnabled = false;
             ContextKey = "LMS.Models.ApplicationDbContext";
-        }
-
-        public static String RemoveDiacritics(string s)
-        {
-            string normalizedString = s.Normalize(NormalizationForm.FormD);
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < normalizedString.Length; i++)
-            {
-                char c = normalizedString[i];
-                if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
-                    stringBuilder.Append(c);
-            }
-            return stringBuilder.ToString();
         }
 
         protected override void Seed(LMS.Models.ApplicationDbContext context)
@@ -386,10 +374,10 @@ namespace LMS.Migrations
                 do
                 {
                     n++;
-                    username = string.Format("{0}{1}", RemoveDiacritics(firstname).ToLower(), n);
+                    username = string.Format("{0}{1}", firstname.RemoveDiacritics().ToLower(), n);
                 } while (context.Users.Any(u => u.UserName == username));
 
-                user = new ApplicationUser { UserName = username, Email = RemoveDiacritics(firstname + "_" + lastname).ToLower() + n + "@skolan.se", FirstName = firstname, LastName = lastname, GroupId = (context.Groups.Find(rnd.Next(context.Groups.Count()) + 1) ?? context.Groups.FirstOrDefault()).Id };
+                user = new ApplicationUser { UserName = username, Email = (firstname + "_" + lastname).RemoveDiacritics().ToLower() + n + "@skolan.se", FirstName = firstname, LastName = lastname, GroupId = (context.Groups.Find(rnd.Next(context.Groups.Count()) + 1) ?? context.Groups.FirstOrDefault()).Id };
                 userManager.Create(user, firstname + n + "!");
                 context.SaveChanges();
             }

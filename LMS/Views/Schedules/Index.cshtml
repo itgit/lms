@@ -9,45 +9,58 @@
 <h2>Schedule for @ViewBag.groupname</h2>
 
 @Html.ActionLink("Edit schedule", "Index", "Activities", new { id = ViewBag.groupid }, null)
+    <canvas id="schedule" class="col-xs-12" style="padding-right: 0; padding-left: 0;"></canvas>
 
-<canvas id="schedule" class="col-xs-12"></canvas>
 
 @section scripts
 {
     <script src="https://rawgit.com/maciej-gurban/responsive-bootstrap-toolkit/master/dist/bootstrap-toolkit.min.js"></script>
+
     <script>
 
-        (function ($, document, window, viewport) {
-            $(document).ready(function () {
-                if (viewport.current() == 'lg')
-                    c.width = 1450;
-                else if(viewport.current() == 'md')
-                    c.width = 1200;
-                else if(viewport.current() == 'sm')
-                    c.width = 992;
-                else if(viewport.current() == 'xs')
-                    c.width = 768;
-                c.height = 1.2 * c.width;
-                scheduleWidth = c.width - leftMarginWidth - rightMarginWidth;
-                scheduleHeight = c.height - topMarginHeight - bottomMarginWidth;
-                drawSchedule();
-            });
-            $(window).resize(viewport.changed(function () {
-                if (viewport.current() == 'lg')
-                    c.width = 1450;
-                else if(viewport.current() == 'md')
-                    c.width = 1200;
-                else if(viewport.current() == 'sm')
-                    c.width = 992;
-                else if(viewport.current() == 'xs')
-                    c.width = 768;
-                c.height = 1.2 * c.width;
-                scheduleWidth = c.width - leftMarginWidth - rightMarginWidth;
-                scheduleHeight = c.height - topMarginHeight - bottomMarginWidth;
-                drawSchedule();
-                console.log('Current breakpoint:', viewport.current());
-            }));
-        }(jQuery, document, window, ResponsiveBootstrapToolkit));
+    (function ($, document, window, viewport) {
+        $(document).ready(function () {
+            drawSchedule(viewport.current());
+        });
+
+        $(window).resize(viewport.changed(function () {
+            drawSchedule(viewport.current());
+        }));
+
+        var mouseX;
+        var mouseY;
+        var over = false;
+        var activityNumber;
+
+        $('#schedule').mousemove(function (e) {
+            mouseX = (e.pageX - this.offsetLeft) * (c.height / c.offsetHeight);
+            mouseY = (e.pageY - this.offsetTop) * (c.height / c.offsetHeight);
+            over = false;
+
+            for (var i = 0; i < activities.length; i++) {
+                if (mouseX < activities[i].right && mouseX > activities[i].left && mouseY > activities[i].top && mouseY < activities[i].bottom) {
+                    $(this).css('cursor','pointer');
+                    over = true;
+                    activityNumber = i;
+                }
+            }
+            if (over == false)
+            {
+                $(this).css('cursor','auto');
+            }
+        });
+
+        $('#schedule').click(function (e) {
+            if (over == true)
+            {
+                console.log('clicked on activity ' + activities[activityNumber].id);
+                var url = '@Url.Action("Details", "Activities")';
+                $(location).attr('href', url + '?id=' + activities[activityNumber].id + '&groupid=' + @Model.FirstOrDefault().GroupId);
+            }
+        });
+
+    }(jQuery, document, window, ResponsiveBootstrapToolkit));
+
     </script>
 
     <script>
@@ -65,18 +78,42 @@
 
         var activities = [];
 
-        function drawSchedule() {
+        var Activity = function(id, x, y, w, h) {
+            this.id = id;
+            this.left = x;
+            this.top = y;
+            this.right = x + w;
+            this.bottom = y + h;
+        };
+
+        function drawSchedule(size) {
+
+            activities = [];
+
+            if(size == 'xs')
+                c.width = 768;
+            else if(size == 'sm')
+                c.width = 992;
+            else if(size == 'md')
+                c.width = 1200;
+            else
+                c.width = 1450;
+
+            c.height = 1.4 * c.width;
+            scheduleWidth = c.width - leftMarginWidth - rightMarginWidth;
+            scheduleHeight = c.height - topMarginHeight - bottomMarginWidth;
+
             ctx.translate(leftMarginWidth, topMarginHeight);
 
             var dayOfWeek =
                 [
-                    "Måndag",
-                    "Tisdag",
-                    "Onsdag",
-                    "Torsdag",
-                    "Fredag",
-                    "Lördag",
-                    "Söndag"
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                    "Sunday"
                 ];
 
             ctx.fillStyle = "#ffffff";
@@ -148,19 +185,13 @@
             }
 
             @foreach (var activity in Model)
-        {
-            var line = string.Format("drawActivity({0}, {1}, {2}, {3}, {4}, \"{5}\");" + Environment.NewLine, (int)activity.Day, activity.StartTime.Hours, activity.StartTime.Minutes, activity.EndTime.Hours, activity.EndTime.Minutes, activity.Name);
-            @Html.Raw(line)
-        }
-
-            @*drawActivity(0, 8, 0, 9, 45, "Matematik");
-        drawActivity(1, 9, 30, 11, 15, "Fysik");
-        drawActivity(2, 11, 0, 12, 45, "Gymnastik");
-        drawActivity(3, 12, 30, 14, 15, "Svenska");
-        drawActivity(4, 14, 0, 15, 45, "Engelska");*@
+            {
+                var line = string.Format("drawActivity({0}, {1}, {2}, {3}, {4}, {5}, \"{6}\");" + Environment.NewLine, activity.Id, (int)activity.Day, activity.StartTime.Hours, activity.StartTime.Minutes, activity.EndTime.Hours, activity.EndTime.Minutes, activity.Name);
+                @Html.Raw(line)
+            }
         };
 
-        function drawActivity(day, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute, description) {
+        function drawActivity(id, day, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute, description) {
             var startTimeHeight = (scheduleHeight / hoursInDay) * (startTimeHour - startTime + startTimeMinute / 60);
             var endTimeHeight = (scheduleHeight / hoursInDay) * (endTimeHour - startTime + endTimeMinute / 60);
             ctx.fillStyle = "#ffffff";
@@ -183,7 +214,14 @@
             ctx.font = Math.round(fontSize * 1.25) + "px Times";
             ctx.textAlign = "center";
             ctx.fillText(description, (day + 0.5) * (scheduleWidth / 5), (startTimeHeight + endTimeHeight) * 0.5 + fontSize * 0.3125);
-            activities.push();
+            var activity = new Activity(
+                id,
+                day * (scheduleWidth / 5) + leftMarginWidth, 
+                startTimeHeight + topMarginHeight, 
+                scheduleWidth / 5, 
+                endTimeHeight - startTimeHeight
+            );
+            activities.push(activity);
         }
 
         function timeString(hour, minute) {

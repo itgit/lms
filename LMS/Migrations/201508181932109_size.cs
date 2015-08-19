@@ -3,16 +3,16 @@ namespace LMS.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class newfile : DbMigration
+    public partial class size : DbMigration
     {
         public override void Up()
         {
-            AddColumn("dbo.Files", "FilePath", c => c.String());
+            AddColumn("dbo.Files", "FileSize", c => c.Int());
         }
         
         public override void Down()
         {
-            DropColumn("dbo.Files", "FilePath");
+            DropColumn("dbo.Files", "FileSize");
         }
     }
 }

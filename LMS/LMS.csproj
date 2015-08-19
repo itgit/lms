@@ -162,45 +162,33 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ActivitiesController.cs" />
+    <Compile Include="Controllers\FilesController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\SchedulesController.cs" />
-    <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508170801161_inital.cs" />
-    <Compile Include="Migrations\201508170801161_inital.Designer.cs">
-      <DependentUpon>201508170801161_inital.cs</DependentUpon>
+    <Compile Include="Migrations\201508181807564_first.cs" />
+    <Compile Include="Migrations\201508181807564_first.Designer.cs">
+      <DependentUpon>201508181807564_first.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508171155256_files.cs" />
-    <Compile Include="Migrations\201508171155256_files.Designer.cs">
-      <DependentUpon>201508171155256_files.cs</DependentUpon>
+    <Compile Include="Migrations\201508181808593_second.cs" />
+    <Compile Include="Migrations\201508181808593_second.Designer.cs">
+      <DependentUpon>201508181808593_second.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508171202070_file.cs" />
-    <Compile Include="Migrations\201508171202070_file.Designer.cs">
-      <DependentUpon>201508171202070_file.cs</DependentUpon>
+    <Compile Include="Migrations\201508181932109_size.cs" />
+    <Compile Include="Migrations\201508181932109_size.Designer.cs">
+      <DependentUpon>201508181932109_size.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508171220229_new.cs" />
-    <Compile Include="Migrations\201508171220229_new.Designer.cs">
-      <DependentUpon>201508171220229_new.cs</DependentUpon>
+    <Compile Include="Migrations\201508182324484_filetype.cs" />
+    <Compile Include="Migrations\201508182324484_filetype.Designer.cs">
+      <DependentUpon>201508182324484_filetype.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508171232267_newfile.cs" />
-    <Compile Include="Migrations\201508171232267_newfile.Designer.cs">
-      <DependentUpon>201508171232267_newfile.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201508171238259_newfile1.cs" />
-    <Compile Include="Migrations\201508171238259_newfile1.Designer.cs">
-      <DependentUpon>201508171238259_newfile1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201508171252059_newfile2.cs" />
-    <Compile Include="Migrations\201508171252059_newfile2.Designer.cs">
-      <DependentUpon>201508171252059_newfile2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201508171253476_newfile3.cs" />
-    <Compile Include="Migrations\201508171253476_newfile3.Designer.cs">
-      <DependentUpon>201508171253476_newfile3.cs</DependentUpon>
+    <Compile Include="Migrations\201508182329273_filedate.cs" />
+    <Compile Include="Migrations\201508182329273_filedate.Designer.cs">
+      <DependentUpon>201508182329273_filedate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -209,6 +197,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Shared.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -281,8 +270,11 @@
     <Content Include="Views\Activities\Details.cshtml" />
     <Content Include="Views\Activities\Edit.cshtml" />
     <Content Include="Views\Activities\Index.cshtml" />
-    <Content Include="Views\Upload.cshtml" />
-    <Content Include="Views\Upload\Index.cshtml" />
+    <Content Include="Views\Files\Upload.cshtml" />
+    <Content Include="Views\Files\Delete.cshtml" />
+    <Content Include="Views\Files\Details.cshtml" />
+    <Content Include="Views\Files\Edit.cshtml" />
+    <Content Include="Views\Files\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -295,29 +287,20 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201508170801161_inital.resx">
-      <DependentUpon>201508170801161_inital.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508181807564_first.resx">
+      <DependentUpon>201508181807564_first.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508171155256_files.resx">
-      <DependentUpon>201508171155256_files.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508181808593_second.resx">
+      <DependentUpon>201508181808593_second.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508171202070_file.resx">
-      <DependentUpon>201508171202070_file.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508181932109_size.resx">
+      <DependentUpon>201508181932109_size.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508171220229_new.resx">
-      <DependentUpon>201508171220229_new.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508182324484_filetype.resx">
+      <DependentUpon>201508182324484_filetype.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508171232267_newfile.resx">
-      <DependentUpon>201508171232267_newfile.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508171238259_newfile1.resx">
-      <DependentUpon>201508171238259_newfile1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508171252059_newfile2.resx">
-      <DependentUpon>201508171252059_newfile2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508171253476_newfile3.resx">
-      <DependentUpon>201508171253476_newfile3.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508182329273_filedate.resx">
+      <DependentUpon>201508182329273_filedate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

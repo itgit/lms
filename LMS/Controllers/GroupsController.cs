@@ -59,7 +59,7 @@ namespace LMS.Controllers
         }
 
         // GET: Groups/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(string id)
         {
             if (id == null)
             {
