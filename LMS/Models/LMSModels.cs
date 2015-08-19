@@ -17,8 +17,26 @@ namespace LMS.Models
         public virtual ICollection<Activity> Activities { get; set; }
 
         public virtual ICollection<ApplicationUser> Users { get; set; }
+    }
 
-        public virtual ICollection<File> Files { get; set; }
+    public class Comment
+    {
+        [Key]
+        public int Id { get; set; }
+        [Display(Name = "Comment")]
+        [DataType(DataType.MultilineText)]
+        public string Content { get; set; }
+        [Display(Name = "Time stamp")]
+        public DateTime TimeStamp { get; set; }
+        [Required]
+        public Guid FileId { get; set; }
+        [ForeignKey("FileId")]
+        [Display(Name = "File")]
+        public virtual File File { get; set; }
+        public string UserId { get; set; }
+        [ForeignKey("UserId")]
+        [Display(Name = "User")]
+        public virtual ApplicationUser User { get; set; }
     }
 
     public class File
@@ -35,15 +53,17 @@ namespace LMS.Models
         public string FileType { get; set; }
         [Display(Name = "Date")]
         public DateTime FileDate { get; set; }
-        public bool? IsShared { get; set; }
+        [Display(Name = "Shared?")]
+        public bool IsShared { get; set; }
         public string UserId { get; set; }
         [ForeignKey("UserId")]
         [Display(Name = "User")]
         public virtual ApplicationUser User { get; set; }
-        public int? GroupId { get; set; }
-        [ForeignKey("GroupId")]
-        [Display(Name = "Group")]
-        public virtual Group Group { get; set; }
+        public int ActivityTypeId { get; set; }
+        [ForeignKey("ActivityTypeId")]
+        [Display(Name = "Activity type")]
+        public virtual ActivityType ActivityType { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
         [NotMapped]
         [Display(Name = "File")]
         [DataType(DataType.Upload)]
@@ -84,16 +104,18 @@ namespace LMS.Models
         [Key]
         public int Id { get; set; }
 
-        [Display(Name="Name")]
-        public string Name { get; set; }
+        [Required]
+        public int ActivityTypeId { get; set; }
+        [ForeignKey("ActivityTypeId")]
+        [Display(Name = "Activity type")]
+        public virtual ActivityType ActivityType { get; set; }
+
         [Display(Name = "Day")]
         public Day Day { get; set; }
-
         [Display(Name = "Start time")]
         [DataType(DataType.Time)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = @"{0:hh\:mm}")]
         public TimeSpan StartTime { get; set; }
-
         [Display(Name = "End time")]
         [DataType(DataType.Time)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = @"{0:hh\:mm}")]
@@ -104,6 +126,14 @@ namespace LMS.Models
         [ForeignKey("GroupId")]
         [Display(Name = "Group")]
         public virtual Group Group { get; set; }
+    }
+
+    public class ActivityType
+    {
+        [Key]
+        public int Id { get; set; }
+        [Display(Name = "Activity type")]
+        public string Name { get; set; }
     }
 
 }

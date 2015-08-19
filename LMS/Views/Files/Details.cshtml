@@ -4,6 +4,15 @@
     ViewBag.Title = "Details";
 }
 
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}
+
 <h2>Details</h2>
 
 <div>
@@ -11,11 +20,11 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Group.Name)
+            @Html.DisplayNameFor(model => model.User.Group.Name)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Group.Name)
+            @Html.DisplayFor(model => model.User.Group.Name)
         </dd>
 
         <dt>
@@ -49,9 +58,40 @@
         <dd>
             @Html.DisplayFor(model => model.ReadableFileSize)
         </dd>
-
     </dl>
 </div>
+
+@if (Model.Comments.Count() > 0)
+{
+    <hr />
+    <h4>Comments:</h4>
+
+    <table class="table">
+        @foreach (var comment in Model.Comments.OrderBy(c => c.TimeStamp))
+        {
+            <tr class="row">
+                <td class="col-xs-2 text-right">
+                    @if (comment.UserId == Model.UserId)
+                    {
+                        <span style="cursor:pointer;" data-toggle="tooltip" title="Written at @comment.TimeStamp" class="label label-success">
+                            <b>You:</b>
+                        </span>
+                    }
+                    else
+                    {
+                        <span style="cursor:pointer;" data-toggle="tooltip" title="Written at @comment.TimeStamp" class="label label-warning">
+                            <b>@comment.User.FirstName @comment.User.LastName:</b>
+                        </span>
+                    }
+                </td>
+                <td class="col-xs-10">
+                    @comment.Content
+                </td>
+            </tr>
+        }
+    </table>
+}
+
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")

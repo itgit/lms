@@ -11,7 +11,7 @@
     @Html.ActionLink("Manage groups", "Index", "Groups", routeValues: null, htmlAttributes: new { id = "groupLink" })
 </p>
 
-@if (Model.Where(g => g.Group == null).Count() > 0)
+@if (Model.Where(g => g.GroupId == null).Count() > 0)
 {
     <div class="panel panel-danger">
         <div class="panel-heading">
@@ -37,7 +37,7 @@
                 <th></th>
             </tr>
 
-            @foreach (var user in Model.Where(u => u.Group == null))
+            @foreach (var user in Model.Where(u => u.GroupId == null))
             {
                 <tr @(user.Role == LMS.Models.Role.Teacher ? "class=warning" : "")>
                     <td>
@@ -78,7 +78,7 @@
                 }
             </span>
         </div>
-        <table class="table">
+        <table class="table table-condensed">
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.UserName)
@@ -98,7 +98,7 @@
                 <th></th>
             </tr>
 
-            @foreach (var user in Model.Where(u => u.Group == group))
+            @foreach (var user in Model.Where(u => u.GroupId == group.Id))
             {
                 <tr @(user.Role == LMS.Models.Role.Teacher ? "class=warning" : "")>
                     <td>

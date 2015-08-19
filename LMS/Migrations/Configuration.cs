@@ -396,6 +396,28 @@ namespace LMS.Migrations
                 userManager.AddToRole(user.Id, "admin");
             }
             context.SaveChanges();
+            var id = 1;
+
+            var activities = new List<ActivityType>
+            {
+                new ActivityType() { Id = id++, Name = "Matematik" },
+                new ActivityType() { Id = id++, Name = "Svenska" },
+                new ActivityType() { Id = id++, Name = "Engelska" },
+                new ActivityType() { Id = id++, Name = "Historia" },
+                new ActivityType() { Id = id++, Name = "Samhällskunskap" },
+                new ActivityType() { Id = id++, Name = "Religionskunskap" },
+                new ActivityType() { Id = id++, Name = "Idrott och hälsa" },
+                new ActivityType() { Id = id++, Name = "Naturkunskap" },
+                new ActivityType() { Id = id++, Name = "Estetisk verksamhet" },
+                new ActivityType() { Id = id++, Name = "Tyska" },
+                new ActivityType() { Id = id++, Name = "Franska" },
+                new ActivityType() { Id = id++, Name = "Spanska" },
+            };
+
+            activities.ForEach(a => context.ActivityTypes.AddOrUpdate(a));
+
+            context.SaveChanges();
+
         }
     }
 }

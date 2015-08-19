@@ -119,6 +119,6 @@ namespace LMS.Models
         public bool IsTeacher { get; set; }
 
         [Display(Name = "Group")]
-        public Group Group { get; set; }
+        public int? GroupId { get; set; }
     }
 }

@@ -7,13 +7,13 @@ namespace LMS.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class second : IMigrationMetadata
+    public sealed partial class Comment2 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(second));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Comment2));
         
         string IMigrationMetadata.Id
         {
-            get { return "201508181808593_second"; }
+            get { return "201508192146184_Comment2"; }
         }
         
         string IMigrationMetadata.Source

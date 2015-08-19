@@ -350,15 +350,13 @@ namespace LMS.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Group = user.Group,
-                //Role = roles.Contains("admin") ? Role.Teacher : Role.Student,
-                IsTeacher = roles.Contains("admin"),
+                GroupId = user.GroupId,
+                IsTeacher = roles.Contains("admin")
             };
 
-            //ViewBag.group = viewitem.Group.Name;
-            ViewBag.groups = db.Groups.ToList();
-            //ViewBag.airplaneserialnumber = new SelectList(db.Groups, "serialnumber", "model", crewMember.airplaneserialnumber);
-
+            ViewBag.GroupId = new List<SelectListItem>() { new SelectListItem() { Value = String.Empty, Text = "No group" } }
+            .Concat(new SelectList(db.Groups, "Id", "Name", user.GroupId));
+       
             return View(viewitem);
         }
 
@@ -367,39 +365,45 @@ namespace LMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditUser(/*[Bind(Include = "id,username,email,firstname,lastname")] ApplicationUser user, Role role*/ UserViewModel model)
+        public ActionResult EditUser([Bind(Include = "Id,UserName,Email,FirstName,Lastname,GroupId")] ApplicationUser user, bool IsTeacher)
         {
-            var olduser = UserManager.FindById(model.Id);
-            if(olduser == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
 
-            var user = new ApplicationUser
-            {
-                Id = model.Id, 
-                UserName = model.UserName, 
-                Email = model.Email, 
-                FirstName = model.FirstName, 
-                LastName = model.LastName,
-                PasswordHash = olduser.PasswordHash,
-                SecurityStamp = olduser.SecurityStamp,
-                PhoneNumber = olduser.PhoneNumber,
-                GroupId = model.Group.Id,
-            };
+            //var user = new ApplicationUser
+            //{
+            //    Id = model.Id,
+            //    UserName = model.UserName,
+            //    Email = model.Email,
+            //    FirstName = model.FirstName,
+            //    LastName = model.LastName,
+            //    PasswordHash = olduser.PasswordHash,
+            //    SecurityStamp = olduser.SecurityStamp,
+            //    PhoneNumber = olduser.PhoneNumber,
+            //    GroupId = model.Group.Id,
+            //};
 
             if (ModelState.IsValid)
             {
                 db.Entry(user).State = EntityState.Modified;
+                db.Entry(user).Property(u => u.AccessFailedCount).IsModified = false;
+                //db.Entry(user).Property(u => u.Claims).IsModified = false;
+                db.Entry(user).Property(u => u.EmailConfirmed).IsModified = false;
+                db.Entry(user).Property(u => u.LockoutEnabled).IsModified = false;
+                db.Entry(user).Property(u => u.LockoutEndDateUtc).IsModified = false;
+                //db.Entry(user).Property(u => u.Logins).IsModified = false;
+                db.Entry(user).Property(u => u.PasswordHash).IsModified = false;
+                db.Entry(user).Property(u => u.PhoneNumber).IsModified = false;
+                db.Entry(user).Property(u => u.PhoneNumberConfirmed).IsModified = false;
+                db.Entry(user).Property(u => u.SecurityStamp).IsModified = false;
+                db.Entry(user).Property(u => u.TwoFactorEnabled).IsModified = false;
                 db.SaveChanges();
-                if (model.IsTeacher)
-                {                 
+
+                if (IsTeacher)
+                {
                     UserManager.AddToRole(user.Id, "admin");
                     db.SaveChanges();
                 }
                 return RedirectToAction("Index");
             }
-            //ViewBag.airplaneserialnumber = new SelectList(db.Airplanes, "serialnumber", "model", crewMember.airplaneserialnumber);
 
             return View(user);
         }
@@ -450,13 +454,13 @@ namespace LMS.Controllers
                 LastName = u.LastName,
                 Email = u.Email,
                 Role = a.Role == null ? Role.Student : a.Role,
-                Group = u.Group
+                GroupId = u.GroupId
             };
 
             //var groups = db.Groups.ToList();
             //groups.Add(new Group() { Name = "No group" });
-            var groups = db.Groups/*.Include(g => g.Activities)*/.OrderBy(g => g.Name).ToList();
-            ViewBag.groups = groups;
+            //var groups = db.Groups/*.Include(g => g.Activities)*/.OrderBy(g => g.Name).ToList();
+            ViewBag.groups = db.Groups.OrderBy(g => g.Name).ToList();
 
             return View(users);
         }

@@ -22,7 +22,7 @@
         <table class="table">
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Name)
+                    @Html.DisplayNameFor(model => model.ActivityType.Name)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Day)
@@ -40,7 +40,7 @@
                 if (lastday != item.Day) { background = !background; }
                 <tr @(background ? "" : "class=grey")>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Name)
+                        @Html.DisplayFor(modelItem => item.ActivityType.Name)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Day)

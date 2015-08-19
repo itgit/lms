@@ -167,28 +167,21 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\SchedulesController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508181807564_first.cs" />
-    <Compile Include="Migrations\201508181807564_first.Designer.cs">
-      <DependentUpon>201508181807564_first.cs</DependentUpon>
+    <Compile Include="Migrations\201508191948403_First.cs" />
+    <Compile Include="Migrations\201508191948403_First.Designer.cs">
+      <DependentUpon>201508191948403_First.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508181808593_second.cs" />
-    <Compile Include="Migrations\201508181808593_second.Designer.cs">
-      <DependentUpon>201508181808593_second.cs</DependentUpon>
+    <Compile Include="Migrations\201508192139270_Comment.cs" />
+    <Compile Include="Migrations\201508192139270_Comment.Designer.cs">
+      <DependentUpon>201508192139270_Comment.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508181932109_size.cs" />
-    <Compile Include="Migrations\201508181932109_size.Designer.cs">
-      <DependentUpon>201508181932109_size.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201508182324484_filetype.cs" />
-    <Compile Include="Migrations\201508182324484_filetype.Designer.cs">
-      <DependentUpon>201508182324484_filetype.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201508182329273_filedate.cs" />
-    <Compile Include="Migrations\201508182329273_filedate.Designer.cs">
-      <DependentUpon>201508182329273_filedate.cs</DependentUpon>
+    <Compile Include="Migrations\201508192146184_Comment2.cs" />
+    <Compile Include="Migrations\201508192146184_Comment2.Designer.cs">
+      <DependentUpon>201508192146184_Comment2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -275,6 +268,11 @@
     <Content Include="Views\Files\Details.cshtml" />
     <Content Include="Views\Files\Edit.cshtml" />
     <Content Include="Views\Files\Index.cshtml" />
+    <Content Include="Views\Test\Create.cshtml" />
+    <Content Include="Views\Test\Delete.cshtml" />
+    <Content Include="Views\Test\Details.cshtml" />
+    <Content Include="Views\Test\Edit.cshtml" />
+    <Content Include="Views\Test\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -287,20 +285,14 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201508181807564_first.resx">
-      <DependentUpon>201508181807564_first.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508191948403_First.resx">
+      <DependentUpon>201508191948403_First.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508181808593_second.resx">
-      <DependentUpon>201508181808593_second.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508192139270_Comment.resx">
+      <DependentUpon>201508192139270_Comment.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508181932109_size.resx">
-      <DependentUpon>201508181932109_size.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508182324484_filetype.resx">
-      <DependentUpon>201508182324484_filetype.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508182329273_filedate.resx">
-      <DependentUpon>201508182329273_filedate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508192146184_Comment2.resx">
+      <DependentUpon>201508192146184_Comment2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

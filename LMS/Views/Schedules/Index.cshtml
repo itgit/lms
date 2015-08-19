@@ -68,11 +68,11 @@
         var ctx = c.getContext("2d");
         var topMarginHeight = 40;
         var rightMarginWidth = 10;
-        var bottomMarginWidth = 10;
+        var bottomMarginWidth = 20;
         var scheduleWidth = c.width - leftMarginWidth - rightMarginWidth;
         var scheduleHeight = c.height - topMarginHeight - bottomMarginWidth;
         var fontSize = 20;
-        var leftMarginWidth = fontSize * 3;
+        var leftMarginWidth = fontSize * 3.5;
         var hoursInDay = @(ViewBag.last - ViewBag.first);
         var startTime = @ViewBag.first;
 
@@ -186,7 +186,7 @@
 
             @foreach (var activity in Model)
             {
-                var line = string.Format("drawActivity({0}, {1}, {2}, {3}, {4}, {5}, \"{6}\");" + Environment.NewLine, activity.Id, (int)activity.Day, activity.StartTime.Hours, activity.StartTime.Minutes, activity.EndTime.Hours, activity.EndTime.Minutes, activity.Name);
+                var line = string.Format("drawActivity({0}, {1}, {2}, {3}, {4}, {5}, \"{6}\");" + Environment.NewLine, activity.Id, (int)activity.Day, activity.StartTime.Hours, activity.StartTime.Minutes, activity.EndTime.Hours, activity.EndTime.Minutes, activity.ActivityType.Name);
                 @Html.Raw(line)
             }
         };

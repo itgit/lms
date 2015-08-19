@@ -63,6 +63,7 @@ namespace LMS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Group not found");
             }
+            ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes, "Id", "Name");
             ViewBag.groupname = group.Name;
             return View();
         }
@@ -72,23 +73,25 @@ namespace LMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Day,StartTime,EndTime,GroupId")] Activity activity)
+        public ActionResult Create([Bind(Include = "Id,ActivityTypeId,Day,StartTime,EndTime,GroupId")] Activity activity)
         {
             if (ModelState.IsValid)
             {
+                ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes, "Id", "Name", activity.ActivityTypeId);
                 if (activity.StartTime >= activity.EndTime)
                 {
                     ViewBag.errormessage = "An activity cannot end before it starts!";
                     return View(activity);  // Illegal activity
                 }
-                foreach (var otheractivity in db.Activities.Where(a => a.GroupId == activity.GroupId))
+                foreach (var otheractivity in db.Activities.Where(a => a.GroupId == activity.GroupId).Include(a => a.ActivityType))
                 {
                     if (activity.Day == otheractivity.Day)
                     {
                         if ((activity.StartTime >= otheractivity.StartTime && activity.StartTime < otheractivity.EndTime) ||
-                            (activity.EndTime > otheractivity.StartTime && activity.EndTime <= otheractivity.EndTime))
+                            (activity.EndTime > otheractivity.StartTime && activity.EndTime <= otheractivity.EndTime) ||
+                            (activity.StartTime <= otheractivity.StartTime && activity.EndTime >= otheractivity.EndTime))
                         {
-                            ViewBag.errormessage = "This time period is already taken by another activity (" + otheractivity.Name + " " + otheractivity.StartTime + "-" + otheractivity.EndTime + ")!";
+                            ViewBag.errormessage = "This time period is already taken by another activity (" + otheractivity.ActivityType.Name + " " + otheractivity.StartTime + "-" + otheractivity.EndTime + ")!";
                             return View(activity);  // Illegal activity
                         }
                     }
@@ -113,6 +116,8 @@ namespace LMS.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes, "Id", "Name", activity.ActivityTypeId);
+
             return View(activity);
         }
 
@@ -121,14 +126,35 @@ namespace LMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Day,StartTime,EndTime,GroupId")] Activity activity)
+        public ActionResult Edit([Bind(Include = "Id,ActivityTypeId,Day,StartTime,EndTime,GroupId")] Activity activity)
         {
             if (ModelState.IsValid)
             {
+                ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes, "Id", "Name", activity.ActivityTypeId);
+                if (activity.StartTime >= activity.EndTime)
+                {
+                    ViewBag.errormessage = "An activity cannot end before it starts!";
+                    return View(activity);  // Illegal activity
+                }
+                foreach (var otheractivity in db.Activities.Where(a => a.GroupId == activity.GroupId && a.Id != activity.Id).Include(a => a.ActivityType))
+                {
+                    if (activity.Day == otheractivity.Day)
+                    {
+                        if ((activity.StartTime >= otheractivity.StartTime && activity.StartTime < otheractivity.EndTime) ||
+                            (activity.EndTime > otheractivity.StartTime && activity.EndTime <= otheractivity.EndTime) ||
+                            (activity.StartTime <= otheractivity.StartTime && activity.EndTime >= otheractivity.EndTime))
+                        {
+                            ViewBag.errormessage = "This time period is already taken by another activity (" + otheractivity.ActivityType.Name + " " + otheractivity.StartTime + "-" + otheractivity.EndTime + ")!";
+                            return View(activity);  // Illegal activity
+                        }
+                    }
+                }
                 db.Entry(activity).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index", new { id = activity.GroupId });
             }
+            ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes, "Id", "Name", activity.ActivityTypeId);
+
             return View(activity);
         }
 

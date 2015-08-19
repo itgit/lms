@@ -20,7 +20,7 @@ namespace LMS.Controllers
         // GET: Files
         public ActionResult Index()
         {
-            var files = db.Files.Include(f => f.Group).Include(f => f.User);
+            var files = db.Files.Include(f => f.User);
             return View(files.ToList());
         }
 
@@ -68,11 +68,12 @@ namespace LMS.Controllers
 
         public ActionResult Upload()
         {
+            ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes, "Id", "Name");
             return View();
         }
 
         [HttpPost]
-        public ActionResult Upload(HttpPostedFileBase Upload)
+        public ActionResult Upload(HttpPostedFileBase Upload, bool isShared, int activityTypeId, string content)
         {
             if (ModelState.IsValid)
             {
@@ -85,14 +86,30 @@ namespace LMS.Controllers
                     {
                         return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Couldn't find user!");
                     }
+                    var user = db.Users.Find(userId);
                     var group = db.Users.Find(userId).Group;
+
+                    string filePath;
+
                     if (group == null)
                     {
-                        return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Couldn't find group!");
+                        filePath = "~/Userfiles/";
                     }
-                    var filePath = System.IO.Path.Combine("~/Userfiles/", Regex.Replace(group.Name.RemoveDiacritics(), @"[^A-Za-z0-9]+", "_") + "/");
+                    else
+                    {
+                        filePath = System.IO.Path.Combine("~/Userfiles/", Regex.Replace(group.Name.RemoveDiacritics(), @"[^A-Za-z0-9]+", "_") + "/");
+                    }
+
+                    var activityType = db.ActivityTypes.Find(activityTypeId);
+
+                    if (activityType != null)
+                    {
+                        filePath = System.IO.Path.Combine(filePath, Regex.Replace(activityType.Name.RemoveDiacritics(), @"[^A-Za-z0-9]+", "_") + "/");
+                    }
+
                     var serverFilePath = Server.MapPath(filePath);
-                    var serverFileName = fileId + "_" +Regex.Replace(fileName.RemoveDiacritics(), @"[^A-Za-z0-9.]+", "_");
+                    var serverFileName = fileId + "_" + Regex.Replace(fileName.RemoveDiacritics(), @"[^A-Za-z0-9.]+", "_");
+
                     try
                     {
                         // Determine whether the directory exists. 
@@ -103,8 +120,9 @@ namespace LMS.Controllers
                     }
                     catch
                     {
-                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest, string.Format("Couldn't create folder for \"{0}\"", group.Name));
+                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest, string.Format("Couldn't create folder for \"{0}\"", user.Group.Name));
                     }
+
                     try
                     {
                         Upload.SaveAs(System.IO.Path.Combine(serverFilePath, serverFileName));
@@ -113,8 +131,28 @@ namespace LMS.Controllers
                     {
                         return new HttpStatusCodeResult(HttpStatusCode.BadRequest, string.Format("Couldn't create file \"{0}\"", Upload.FileName));
                     }
-                    db.Files.Add(new LMS.Models.File() { Id = fileId, FileName = fileName, FilePath = filePath + serverFileName, FileSize = Upload.ContentLength, FileType = Upload.ContentType, FileDate = DateTime.Now, UserId = User.Identity.GetUserId(), GroupId = group.Id });
+
+                    var now = DateTime.Now;
+
+                    db.Files.Add(new LMS.Models.File() {
+                        Id = fileId, 
+                        FileName = fileName, 
+                        FilePath = filePath + serverFileName, 
+                        FileSize = Upload.ContentLength, 
+                        FileType = Upload.ContentType, 
+                        FileDate = now, 
+                        ActivityTypeId = activityTypeId, 
+                        IsShared = isShared, 
+                        UserId = user.Id
+                    });
+
                     db.SaveChanges();
+
+                    if (!String.IsNullOrEmpty(content))
+                    {
+                        db.Comments.Add(new Comment() { Content = content, UserId = user.Id, FileId = fileId, TimeStamp = now });
+                        db.SaveChanges();
+                    }
                 }
                 else
                 {
@@ -157,7 +195,8 @@ namespace LMS.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.GroupId = new SelectList(db.Groups, "Id", "Name", file.GroupId);
+            //ViewBag.GroupId = new SelectList(db.Groups, "Id", "Name", file.GroupId);
+            ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes, "Id", "Name", file.ActivityTypeId);
             ViewBag.UserId = new SelectList(db.Users, "Id", "UserName", file.UserId);
             return View(file);
         }
@@ -176,12 +215,13 @@ namespace LMS.Controllers
                 db.Entry(file).Property(f => f.FileSize).IsModified = false;
                 db.Entry(file).Property(f => f.FileType).IsModified = false;
                 db.Entry(file).Property(f => f.FileDate).IsModified = false;
-                db.Entry(file).Property(f => f.GroupId).IsModified = false;
+                db.Entry(file).Property(f => f.ActivityTypeId).IsModified = false;
                 db.Entry(file).Property(f => f.UserId).IsModified = false;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.GroupId = new SelectList(db.Groups, "Id", "Name", file.GroupId);
+            //ViewBag.GroupId = new SelectList(db.Groups, "Id", "Name", file.GroupId);
+            ViewBag.ActivityTypeId = new SelectList(db.Activities, "Id", "FirstName", file.ActivityTypeId);
             ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", file.UserId);
             return View(file);
         }
