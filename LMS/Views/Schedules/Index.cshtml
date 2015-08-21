@@ -30,7 +30,7 @@
         var mouseX;
         var mouseY;
         var over = false;
-        var activityNumber;
+        var activityNumber = -1;
 
         $('#schedule').mousemove(function (e) {
             mouseX = (e.pageX - this.offsetLeft) * (c.height / c.offsetHeight);
@@ -38,14 +38,26 @@
             over = false;
 
             for (var i = 0; i < activities.length; i++) {
-                if (mouseX < activities[i].right && mouseX > activities[i].left && mouseY > activities[i].top && mouseY < activities[i].bottom) {
+                if (mouseX > activities[i].x1 && mouseX < activities[i].x2 && mouseY > activities[i].y1 && mouseY < activities[i].y2) {
                     $(this).css('cursor','pointer');
                     over = true;
-                    activityNumber = i;
+                    if (i != activityNumber) {
+                        activityNumber = i;
+                        for (j = i + 1; j < activities.length; j++) {
+                            activities[j].color = "#ffffff";
+                        }
+                        activities[activityNumber].color = "#c0ffc0";
+                        drawActivities(activities);
+                    }
+                    else {
+                        activities[i].color = "#ffffff";
+                    }
                 }
             }
-            if (over == false)
+            if (over == false && activityNumber != -1)
             {
+                activityNumber = -1;
+                drawActivities(activities);
                 $(this).css('cursor','auto');
             }
         });
@@ -78,12 +90,20 @@
 
         var activities = [];
 
-        var Activity = function(id, x, y, w, h) {
+        var Activity = function(id, x, y, w, h, lm, tm, st, et, ds, c) {
             this.id = id;
+            this.x1 = x + lm;
+            this.y1 = y + tm;
+            this.x2 = x + w + lm;
+            this.y2 = y + h + tm;
             this.left = x;
             this.top = y;
-            this.right = x + w;
-            this.bottom = y + h;
+            this.width = w;
+            this.height = h;
+            this.startTime = st;
+            this.endTime = et;
+            this.description = ds;
+            this.color = c;
         };
 
         function drawSchedule(size) {
@@ -97,9 +117,9 @@
             else if(size == 'md')
                 c.width = 1200;
             else
-                c.width = 1450;
+                c.width = 1550;
 
-            c.height = 1.4 * c.width;
+            c.height = 0.8 * c.width;
             scheduleWidth = c.width - leftMarginWidth - rightMarginWidth;
             scheduleHeight = c.height - topMarginHeight - bottomMarginWidth;
 
@@ -186,42 +206,52 @@
 
             @foreach (var activity in Model)
             {
-                var line = string.Format("drawActivity({0}, {1}, {2}, {3}, {4}, {5}, \"{6}\");" + Environment.NewLine, activity.Id, (int)activity.Day, activity.StartTime.Hours, activity.StartTime.Minutes, activity.EndTime.Hours, activity.EndTime.Minutes, activity.ActivityType.Name);
+                var line = string.Format("addActivity({0}, {1}, {2}, {3}, {4}, {5}, \"{6}\");" + Environment.NewLine, activity.Id, (int)activity.Day, activity.StartTime.Hours, activity.StartTime.Minutes, activity.EndTime.Hours, activity.EndTime.Minutes, activity.ActivityType.Name);
                 @Html.Raw(line)
             }
+            drawActivities(activities);
         };
 
-        function drawActivity(id, day, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute, description) {
+        function addActivity(id, day, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute, description) {
             var startTimeHeight = (scheduleHeight / hoursInDay) * (startTimeHour - startTime + startTimeMinute / 60);
             var endTimeHeight = (scheduleHeight / hoursInDay) * (endTimeHour - startTime + endTimeMinute / 60);
-            ctx.fillStyle = "#ffffff";
-            ctx.strokeStyle = "#000000";
-            ctx.fillRect(day * (scheduleWidth / 5), startTimeHeight, scheduleWidth / 5, endTimeHeight - startTimeHeight);
-            ctx.strokeRect(day * (scheduleWidth / 5), startTimeHeight, scheduleWidth / 5, endTimeHeight - startTimeHeight);
-            ctx.font = Math.round(fontSize * 0.75) + "px Times";
-            ctx.textAlign = "left";
-            var header = timeString(startTimeHour, startTimeMinute);
-            var textWidth = ctx.measureText(header).width;
-            ctx.fillRect(day * (scheduleWidth / 5) + 10, startTimeHeight - fontSize * 0.5, textWidth + 10, fontSize);
-            ctx.fillStyle = "#000000";
-            ctx.fillText(header, day * (scheduleWidth / 5) + 15, startTimeHeight + fontSize * 0.25);
-            var footer = timeString(endTimeHour, endTimeMinute);
-            textWidth = ctx.measureText(footer).width;
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect((day + 1) * (scheduleWidth / 5) - 20 - textWidth, endTimeHeight - fontSize * 0.5, textWidth + 10, fontSize);
-            ctx.fillStyle = "#000000";
-            ctx.fillText(footer, (day + 1) * (scheduleWidth / 5) - textWidth - 15, endTimeHeight + fontSize * 0.25);
-            ctx.font = Math.round(fontSize * 1.25) + "px Times";
-            ctx.textAlign = "center";
-            ctx.fillText(description, (day + 0.5) * (scheduleWidth / 5), (startTimeHeight + endTimeHeight) * 0.5 + fontSize * 0.3125);
             var activity = new Activity(
                 id,
-                day * (scheduleWidth / 5) + leftMarginWidth, 
-                startTimeHeight + topMarginHeight, 
+                day * (scheduleWidth / 5), 
+                startTimeHeight,
                 scheduleWidth / 5, 
-                endTimeHeight - startTimeHeight
+                endTimeHeight - startTimeHeight,
+                leftMarginWidth,
+                topMarginHeight,
+                timeString(startTimeHour, startTimeMinute),
+                timeString(endTimeHour, endTimeMinute),
+                description,
+                "#ffffff"
             );
             activities.push(activity);
+        }
+
+        function drawActivities(a)
+        {
+            for (var i = 0; i < a.length; i++) {
+                ctx.fillStyle = a[i].color;
+                ctx.fillRect(a[i].left, a[i].top, a[i].width, a[i].height);
+                ctx.strokeStyle = "#000000";
+                ctx.strokeRect(a[i].left, a[i].top, a[i].width, a[i].height);
+            }
+            for (i = 0; i < a.length; i++) {
+                ctx.font = Math.round(fontSize * 0.75) + "px Times";
+                ctx.textAlign = "left";
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(a[i].left + 10, a[i].top - fontSize * 0.5, ctx.measureText(a[i].startTime).width + 10, fontSize);
+                ctx.fillRect(a[i].left + a[i].width - ctx.measureText(a[i].endTime).width - 20, a[i].top + a[i].height - fontSize * 0.5, ctx.measureText(a[i].startTime).width + 10, fontSize);
+                ctx.fillStyle = "#000000";
+                ctx.fillText(a[i].startTime, a[i].left + 15, a[i].top + fontSize * 0.25);
+                ctx.fillText(a[i].endTime, a[i].left + a[i].width - ctx.measureText(a[i].endTime).width - 15, a[i].top + a[i].height + fontSize * 0.25);
+                ctx.font = Math.round(fontSize * 1.25) + "px Times";
+                ctx.textAlign = "center";
+                ctx.fillText(a[i].description, a[i].left + a[i].width * 0.5, a[i].top + a[i].height * 0.5 + fontSize * 0.3125, a[i].width);
+            }
         }
 
         function timeString(hour, minute) {

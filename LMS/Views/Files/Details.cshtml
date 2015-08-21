@@ -1,4 +1,5 @@
-﻿@model LMS.Models.File
+﻿@using Microsoft.AspNet.Identity
+@model LMS.Models.File    
 
 @{
     ViewBag.Title = "Details";
@@ -20,19 +21,19 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.User.Group.Name)
+            @Html.DisplayNameFor(model => model.ActivityType.Name)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.User.Group.Name)
+            @Html.DisplayFor(model => model.ActivityType.Name)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.User.FirstName)
+            @Html.DisplayNameFor(model => model.User.FullName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.User.FirstName)
+            @Html.DisplayFor(model => model.User.FullName)
         </dd>
 
         <dt>
@@ -71,16 +72,16 @@
         {
             <tr class="row">
                 <td class="col-xs-2 text-right">
-                    @if (comment.UserId == Model.UserId)
+                    @if (comment.UserId == User.Identity.GetUserId())
                     {
-                        <span style="cursor:pointer;" data-toggle="tooltip" title="Written at @comment.TimeStamp" class="label label-success">
+                        <span style="cursor:pointer;" data-toggle="tooltip" title="Written at @comment.TimeStamp" class="label @(comment.UserId == Model.UserId ? "label-primary" : "label-success")">
                             <b>You:</b>
                         </span>
                     }
                     else
                     {
-                        <span style="cursor:pointer;" data-toggle="tooltip" title="Written at @comment.TimeStamp" class="label label-warning">
-                            <b>@comment.User.FirstName @comment.User.LastName:</b>
+                        <span style="cursor:pointer;" data-toggle="tooltip" title="Written at @comment.TimeStamp" class="label @(comment.UserId == Model.UserId ? "label-primary" : "label-warning")">
+                            <b>@comment.User.FullName:</b>
                         </span>
                     }
                 </td>
@@ -90,6 +91,20 @@
             </tr>
         }
     </table>
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="col-sm-offset-2 col-sm-10">
+        <div class="form-horizontal">
+            <div class="form-group">
+                @Html.TextArea("Content", null, htmlAttributes: new { @class = "form-control", rows="5", placeholder="Write a comment..." })
+                <input type="submit" value="Add comment" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
 }
 
 <p>

@@ -410,26 +410,6 @@ namespace LMS.Controllers
 
         public ActionResult Index() //List all users
         {
-
-            //var users = from u in db.Users
-            //            from ur in u.Roles
-            //            join r in db.Roles on ur.RoleId equals r.Id
-            //            select new ListViewModel
-            //            {
-            //                Id = u.Id,
-            //                UserName = u.UserName,
-            //                FirstName = u.FirstName,
-            //                LastName = u.LastName,
-            //                Email = u.LastName,
-            //                Role = r.Name ?? "NULL"
-            //            };
-
-            //var q =
-            //from c in categories
-            //join p in products on c equals p.Category into ps
-            //from p in ps.DefaultIfEmpty()
-            //select new { Category = c, ProductName = p == null ? "(No products)" : p.ProductName };
-
             var admins =
             from u in db.Users
             from ur in u.Roles
@@ -457,9 +437,13 @@ namespace LMS.Controllers
                 GroupId = u.GroupId
             };
 
-            //var groups = db.Groups.ToList();
-            //groups.Add(new Group() { Name = "No group" });
-            //var groups = db.Groups/*.Include(g => g.Activities)*/.OrderBy(g => g.Name).ToList();
+            if (!User.IsInRole("admin"))
+            {
+                var currentUser = UserManager.FindById(User.Identity.GetUserId());
+                ViewBag.groups = new List<Group>() { currentUser.Group };
+                return View(users.Where(u => u.GroupId == currentUser.GroupId));
+            }
+
             ViewBag.groups = db.Groups.OrderBy(g => g.Name).ToList();
 
             return View(users);

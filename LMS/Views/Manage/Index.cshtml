@@ -6,10 +6,14 @@
 
 <h2>@ViewBag.Title</h2>
 
-<p>
-    @Html.ActionLink("Register new user", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" }) |
-    @Html.ActionLink("Manage groups", "Index", "Groups", routeValues: null, htmlAttributes: new { id = "groupLink" })
-</p>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        @Html.ActionLink("Register new user", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" }) |
+        @Html.ActionLink("Manage groups", "Index", "Groups", routeValues: null, htmlAttributes: new { id = "groupLink" })
+    </p>
+}
+
 
 @if (Model.Where(g => g.GroupId == null).Count() > 0)
 {
@@ -17,7 +21,7 @@
         <div class="panel-heading">
             <span style="font-size:2em;">Not assigned to group</span>
         </div>
-        <table class="table">
+        <table class="table table-condensed table-hover">
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.UserName)
@@ -70,6 +74,7 @@
         <div class="panel-heading">
             <span style="font-size:2em;">@group.Name</span>
             <span style="float:right;">
+                @Html.ActionLink("Files", "Index", "Files", new { id = group.Id }, null) |
                 @Html.ActionLink("Activities", "Index", "Activities", new { id = group.Id }, null)
                 @if (((LMS.Models.Group)group).Activities.Count() > 0)
                 {
@@ -78,7 +83,7 @@
                 }
             </span>
         </div>
-        <table class="table table-condensed">
+        <table class="table table-condensed table-hover">
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.UserName)
@@ -95,7 +100,10 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Role)
                 </th>
-                <th></th>
+                @if (User.IsInRole("admin"))
+                {
+                    <th></th>
+                }
             </tr>
 
             @foreach (var user in Model.Where(u => u.GroupId == group.Id))
@@ -116,9 +124,12 @@
                     <td>
                         @Html.DisplayFor(modelItem => user.Role)
                     </td>
-                    <td>
-                        @Html.ActionLink("Edit", "EditUser", new { id = user.Id })
-                    </td>
+                    @if (User.IsInRole("admin"))
+                    {
+                        <td>
+                            @Html.ActionLink("Edit", "EditUser", new { id = user.Id })
+                        </td>
+                    }
                 </tr>
             }
         </table>

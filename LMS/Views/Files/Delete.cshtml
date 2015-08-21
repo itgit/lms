@@ -11,20 +11,21 @@
     <h4>File</h4>
     <hr />
     <dl class="dl-horizontal">
+
         <dt>
-            @Html.DisplayNameFor(model => model.Group.Name)
+            @Html.DisplayName("User")
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Group.Name)
+            @Html.DisplayName(String.Join(" ", Model.User.FirstName, Model.User.LastName))
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.User.FirstName)
+            @Html.DisplayNameFor(model => model.ActivityType.Name)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.User.FirstName)
+            @Html.DisplayFor(model => model.ActivityType.Name)
         </dd>
 
         <dt>
@@ -33,14 +34,6 @@
 
         <dd>
             @Html.DisplayFor(model => model.FileName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.FilePath)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.FilePath)
         </dd>
 
     </dl>

@@ -5,12 +5,15 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace LMS.Models
 {
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
+        private string _firstName;
+        private string _lastName;
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -20,13 +23,32 @@ namespace LMS.Models
         }
 
         [Display(Name = "First name")]
-        public string FirstName { get; set; }
+        public string FirstName { get { return _firstName; } set { _firstName = value.Trim(); } }
         [Display(Name = "Last name")]
-        public string LastName { get; set; }
+        public string LastName { get { return _lastName; } set { _lastName = value.Trim(); } }
         public int? GroupId { get; set; }
         [ForeignKey("GroupId")]
         [Display(Name = "Group")]
         public virtual Group Group { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Full name")]
+        public string FullName
+        {
+            get
+            {
+                var names = new List<string>();
+                if (!string.IsNullOrEmpty(FirstName))
+                {
+                    names.Add(FirstName);
+                }
+                if (!string.IsNullOrEmpty(LastName))
+                {
+                    names.Add(LastName);
+                }
+                return string.Join(" ", names);
+            }
+        }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

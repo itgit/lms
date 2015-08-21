@@ -101,7 +101,6 @@ namespace LMS.Models
 
         [Required]
         [Display(Name = "Username")]
-        [RegularExpression("^[a-zA-Z0-9_]{5,}$")]
         public string UserName { get; set; }
 
         [Required]

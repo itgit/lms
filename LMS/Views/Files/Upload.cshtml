@@ -36,7 +36,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Comments.FirstOrDefault().Content)
+                @Html.EditorFor(model => model.Comments.LastOrDefault().Content)
             </div>
         </div>
 

@@ -26,3 +26,7 @@ textarea {
 .grey {
     background-color: #f5f5f5;
 }
+
+textarea {
+    resize: none;
+}

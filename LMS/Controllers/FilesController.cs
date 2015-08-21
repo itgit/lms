@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using LMS.Models;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using ExtensionMethods;
 using System.Text.RegularExpressions;
 
@@ -15,12 +16,40 @@ namespace LMS.Controllers
 {
     public class FilesController : Controller
     {
+        private ApplicationUserManager _userManager;
+
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
         // GET: Files
-        public ActionResult Index()
+        public ActionResult Index(int? id)
         {
             var files = db.Files.Include(f => f.User);
+            if (!User.IsInRole("admin"))
+            {
+                var groupId = UserManager.FindById(User.Identity.GetUserId()).GroupId;
+                files = files.Where(f => f.IsShared && f.User.GroupId == groupId);
+            }
+            else
+            {
+                if (id != null)
+                {
+                    files = files.Where(f => f.User.GroupId == id);
+                }
+            }
+
+
             return View(files.ToList());
         }
 
@@ -35,6 +64,27 @@ namespace LMS.Controllers
             if (file == null)
             {
                 return HttpNotFound();
+            }
+            return View(file);
+        }
+
+        [HttpPost]
+        // GET: Files/Details/5
+        public ActionResult Details(Guid id, string content)
+        {
+            var now = DateTime.Now;
+            var userId = User.Identity.GetUserId();
+
+            File file = db.Files.Find(id);
+            if (file == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (!string.IsNullOrEmpty(content))
+            {
+                db.Comments.Add(new Comment() { Content = content, UserId = userId, FileId = file.Id, TimeStamp = now });
+                db.SaveChanges();
             }
             return View(file);
         }
@@ -68,7 +118,23 @@ namespace LMS.Controllers
 
         public ActionResult Upload()
         {
-            ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes, "Id", "Name");
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            //var activities = db.ActivityTypes.Where(at => at.Activities == user.Group.Activities);
+
+            ViewBag.ActivityTypeId =
+            from a in db.Activities
+            where a.GroupId == user.GroupId
+            join at in db.ActivityTypes on a.ActivityTypeId equals at.Id/* into r
+            from a in r.DefaultIfEmpty()*/
+            orderby at.Name ascending
+            select new SelectListItem
+            {
+                Value = at.Id.ToString(),
+                Text = at.Name
+            };
+
+            //ViewBag.ActivityTypeId = users;//new SelectList(users.ToList(), "Id", "Name");
+            //"Id", "Name");
             return View();
         }
 
