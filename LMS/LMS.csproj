@@ -167,7 +167,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\SchedulesController.cs" />
-    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -190,6 +189,14 @@
     <Compile Include="Migrations\201508202018208_whitespaces.cs" />
     <Compile Include="Migrations\201508202018208_whitespaces.Designer.cs">
       <DependentUpon>201508202018208_whitespaces.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201508230140229_fileextensions.cs" />
+    <Compile Include="Migrations\201508230140229_fileextensions.Designer.cs">
+      <DependentUpon>201508230140229_fileextensions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201508230153444_files.cs" />
+    <Compile Include="Migrations\201508230153444_files.Designer.cs">
+      <DependentUpon>201508230153444_files.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -251,12 +258,8 @@
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
     <Content Include="Views\Account\SendCode.cshtml" />
     <Content Include="Views\Account\VerifyCode.cshtml" />
-    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
     <Content Include="Views\Manage\ChangePassword.cshtml" />
-    <Content Include="Views\Manage\Index2.cshtml" />
     <Content Include="Views\Manage\ManageLogins.cshtml" />
-    <Content Include="Views\Manage\SetPassword.cshtml" />
-    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
@@ -276,11 +279,6 @@
     <Content Include="Views\Files\Details.cshtml" />
     <Content Include="Views\Files\Edit.cshtml" />
     <Content Include="Views\Files\Index.cshtml" />
-    <Content Include="Views\Test\Create.cshtml" />
-    <Content Include="Views\Test\Delete.cshtml" />
-    <Content Include="Views\Test\Details.cshtml" />
-    <Content Include="Views\Test\Edit.cshtml" />
-    <Content Include="Views\Test\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -307,6 +305,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201508202018208_whitespaces.resx">
       <DependentUpon>201508202018208_whitespaces.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508230140229_fileextensions.resx">
+      <DependentUpon>201508230140229_fileextensions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508230153444_files.resx">
+      <DependentUpon>201508230153444_files.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

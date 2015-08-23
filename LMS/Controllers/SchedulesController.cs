@@ -13,6 +13,7 @@ namespace LMS.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Schedules
+        [Authorize]
         public ActionResult Index(int? id)
         {
             if (id == null)

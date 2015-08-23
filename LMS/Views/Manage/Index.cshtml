@@ -68,13 +68,16 @@
     </div>
 }
 
-@foreach (var group in ViewBag.groups)
+@foreach (LMS.Models.Group group in ViewBag.groups)
 {
     <div class="panel panel-success">
         <div class="panel-heading">
             <span style="font-size:2em;">@group.Name</span>
             <span style="float:right;">
-                @Html.ActionLink("Files", "Index", "Files", new { id = group.Id }, null) |
+                @if(group.Activities.Count() > 0)
+                {
+                    @(new MvcHtmlString(@Html.ActionLink("Files", "Index", "Files", new { id = group.Id }, null) + " | "))
+                }
                 @Html.ActionLink("Activities", "Index", "Activities", new { id = group.Id }, null)
                 @if (((LMS.Models.Group)group).Activities.Count() > 0)
                 {

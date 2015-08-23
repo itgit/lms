@@ -43,8 +43,12 @@ namespace LMS.Models
     {
         [Key]
         public Guid Id { get; set; }
+        [Required]
         [Display(Name="File name")]
         public string FileName { get; set; }
+        [Required]
+        [Display(Name = "File extension")]
+        public string FileExtension { get; set; }
         [Display(Name = "File path")]
         public string FilePath { get; set; }
         [Display(Name = "File size in bytes")]
@@ -64,10 +68,11 @@ namespace LMS.Models
         [Display(Name = "Activity type")]
         public virtual ActivityType ActivityType { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
-        [NotMapped]
-        [Display(Name = "File")]
-        [DataType(DataType.Upload)]
-        public HttpPostedFileBase Upload { get; set; }
+        //[NotMapped]
+        //[Display(Name = "File")]
+        //[Required]
+        //[DataType(DataType.Upload)]
+        //public HttpPostedFileBase Upload { get; set; }
         [NotMapped]
         [Display(Name = "File size")]
         public string ReadableFileSize
@@ -86,6 +91,23 @@ namespace LMS.Models
                 return String.Format("{0} {1}",scale * Math.Round(size / scale, 3), prefix[p]);
             }
         }
+    }
+
+    public class FileViewModel
+    {
+        [Display(Name = "File")]
+        [Required]
+        [DataType(DataType.Upload)]
+        public HttpPostedFileBase Upload { get; set; }
+        public int ActivityTypeId { get; set; }
+        [ForeignKey("ActivityTypeId")]
+        [Display(Name = "Activity type")]
+        public virtual ActivityType ActivityType { get; set; }
+        [Display(Name = "Shared?")]
+        public bool IsShared { get; set; }
+        [Display(Name = "Comment")]
+        [DataType(DataType.MultilineText)]
+        public string Comment { get; set; }
     }
 
     public enum Day

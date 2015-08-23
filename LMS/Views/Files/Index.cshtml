@@ -1,13 +1,53 @@
-﻿@model IEnumerable<LMS.Models.File>
+﻿@using Microsoft.AspNet.Identity
+@model IEnumerable<LMS.Models.File>
 
 @{
     ViewBag.Title = "Index";
 }
 
+@section scripts
+{
+    <script>
+
+        var Image = function (content, title) {
+            this.content = content,
+            this.title = title
+        }
+
+        var img = [];
+
+
+        @foreach (var item in Model)
+        {
+            @Html.Raw("img.push(new Image('" + (item.FileType == "image/bmp" || item.FileType == "image/gif" || item.FileType == "image/jpeg" || item.FileType == "image/png" ? "<img src=\"" + Url.Action("Thumbnail", "Files", new { id = item.Id }) + "\" />" : "") + (item.Comments.Count() > 0 ? "<div><em>" + item.Comments.FirstOrDefault().Content + "</em><div>" : "") + "', '<div class=\"text-right\">" + item.FileDate.ToShortDateString() + "</div>'));" + Environment.NewLine)
+        }
+
+        $(function () {
+            $("[id^=image]").each(function () {
+                var image = img[this.id.slice(5)];
+                $(this).popover({
+                    html: true,
+                    title: image.title,
+                    content: image.content,
+                    placement: 'right'
+                });
+            });
+        });
+    </script>
+}
+
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Upload", "Upload")
+    @if (User.IsInRole("admin") && !ViewBag.isYourGroup)
+    {
+        @(new MvcHtmlString("This is not your group, so you cannot upload files here."))
+    }
+    else
+    {
+        @Html.ActionLink("Upload", "Upload")
+    }
+
 </p>
 <table class="table">
     <tr>
@@ -28,7 +68,7 @@
         </th>
         <th></th>
     </tr>
-
+@{ var i = 0; }
 @foreach (var item in Model) {
     <tr>
         <td>
@@ -38,7 +78,7 @@
             @Html.DisplayFor(modelItem => item.ActivityType.Name)
         </td>
         <td>
-            @Html.ActionLink(item.FileName, "Download", new { id = item.Id })
+            @Html.ActionLink(item.FileName + item.FileExtension, "Download", new { id = item.Id }, htmlAttributes: new { id = "image" + i++, rel = "popover", data_trigger = "hover" })
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.IsShared)
@@ -47,9 +87,9 @@
             @Html.DisplayFor(modelItem => item.ReadableFileSize)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details (" + item.Comments.Count() + ")", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @(User.Identity.GetUserId() == item.UserId || User.IsInRole("admin") ? new MvcHtmlString(@Html.ActionLink("Edit", "Edit", new { id = item.Id }) + " | " + Html.ActionLink("Delete", "Delete", new { id = item.Id }) + " |") : null)
+            @Html.ActionLink("Comments" + (item.Comments.Count() > 0 ?  (" (" + item.Comments.Count() + ")") : ""), "Details", new { id = item.Id })
+
         </td>
     </tr>
 }
