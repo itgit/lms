@@ -72,12 +72,12 @@ namespace LMS.Controllers
             ViewBag.GroupId = id;
             ViewBag.ActivitiesCount = db.Activities.Where(a => a.GroupId == id).Count();
 
-            return View(files.OrderBy(f => f.FileDate).ToList());
+            return View(files.OrderByDescending(f => f.FileDate).ToList());
         }
 
         // GET: Files/Details/5
         [Authorize]
-        public ActionResult Details(Guid id)
+        public ActionResult Comments(Guid id)
         {
             if (id == null)
             {
@@ -93,7 +93,7 @@ namespace LMS.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult Details(Guid id, string content)
+        public ActionResult Comments(Guid id, string content)
         {
             var now = DateTime.Now;
             var userId = User.Identity.GetUserId();
@@ -319,7 +319,7 @@ namespace LMS.Controllers
 
             var groupActivityTypeIds = db.Activities.Where(a => a.GroupId == file.GroupId).Select(g => g.ActivityTypeId).ToList();
             ViewBag.HasGroupActivity = groupActivityTypeIds.Contains(file.ActivityTypeId);
-            ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes.Where(a => groupActivityTypeIds.Contains(a.Id)), "Id", "Name", file.ActivityTypeId); 
+            ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes.Where(a => groupActivityTypeIds.Contains(a.Id) || a.Id == file.ActivityTypeId).Select(i => new { Id = i.Id, Name = (i.Id == file.ActivityTypeId ? "‼ " + i.Name + " (Not a group activity type!)" : i.Name) }), "Id", "Name", file.ActivityTypeId); 
             ViewBag.UserId = new SelectList(db.Users, "Id", "UserName", file.UserId);
             return View(file);
         }

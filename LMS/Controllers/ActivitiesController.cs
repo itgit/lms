@@ -87,6 +87,7 @@ namespace LMS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Group not found");
             }
+
             ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes, "Id", "Name");
             ViewBag.groupname = group.Name;
             return View();

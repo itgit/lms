@@ -14,59 +14,11 @@
     </script>
 }
 
-<h2>Details</h2>
-
-<div>
-    <h4>File</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.ActivityType.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ActivityType.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.User.FullName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.User.FullName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.FileName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.FileName)@Html.DisplayFor(model => model.FileExtension)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.FilePath)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.FilePath)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.ReadableFileSize)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ReadableFileSize)
-        </dd>
-    </dl>
-</div>
+<h2>Comments</h2>
+<hr />
 
 @if (Model.Comments.Count() > 0)
 {
-    <hr />
-    <h4>Comments:</h4>
-
     <table class="table">
         @foreach (var comment in Model.Comments.OrderBy(c => c.TimeStamp))
         {
@@ -91,6 +43,10 @@
             </tr>
         }
     </table>
+}
+else
+{
+    <h4>No comments!</h4>
 }
 
 @using (Html.BeginForm())

@@ -404,7 +404,7 @@ namespace LMS.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Manage");
         }
 
         //
@@ -461,7 +461,7 @@ namespace LMS.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Manage");
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult

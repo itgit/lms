@@ -37,7 +37,6 @@
 }
 
 <h2>Index</h2>
-<h1>@Roles.GetUsersInRole("admin").FirstOrDefault()</h1>
 
 <p>
     @if (ViewBag.ActivitiesCount > 0)
@@ -72,16 +71,17 @@
         </th>
         <th></th>
     </tr>
+    <tr class=""
 @{ var i = 0; }
 @foreach (var item in Model) {
-    <tr>
+    <tr @(item.User.IsAdmin ? item.IsShared ? "style=background-color:#cfc" : "style=background-color:#9d9" : item.IsShared ? "style=background-color:#ccf" : "style=background-color:#99d")>
         <td>
             @Html.DisplayFor(modelItem => item.FileDate)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.User.UserName)
         </td>
-        <td @{ if (!ViewBag.GroupActivityTypeIds.Contains(item.ActivityTypeId)) { @("class = danger") ; } }>
+        <td @{ if (!ViewBag.GroupActivityTypeIds.Contains(item.ActivityTypeId)) { @("style=background-color:#d33") ; } }>
             @Html.DisplayFor(modelItem => item.ActivityType.Name)
         </td>
         <td>

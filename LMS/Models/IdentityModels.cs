@@ -2,10 +2,12 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
+using System.Web.Security;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LMS.Models
 {
@@ -37,6 +39,8 @@ namespace LMS.Models
             get
             {
                 var names = new List<string>();
+
+                
                 if (!string.IsNullOrEmpty(FirstName))
                 {
                     names.Add(FirstName);
@@ -46,6 +50,17 @@ namespace LMS.Models
                     names.Add(LastName);
                 }
                 return string.Join(" ", names);
+            }
+        }
+        [NotMapped]
+        public bool IsAdmin
+        {
+            get
+            {
+                using (var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new ApplicationDbContext())))
+                {
+                    return roleManager.FindByName("admin").Users.Any(u => u.UserId == this.Id);
+                }
             }
         }
     }

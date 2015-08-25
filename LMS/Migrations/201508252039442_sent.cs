@@ -3,7 +3,7 @@ namespace LMS.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class filegroup : DbMigration
+    public partial class sent : DbMigration
     {
         public override void Up()
         {

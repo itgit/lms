@@ -30,8 +30,8 @@
             </div>
         </div>
 
-        @if (ViewBag.HasGroupActivity == true)
-        {
+        @*@if (ViewBag.HasGroupActivity == true)
+        {*@
             <div class="form-group">
                 @Html.LabelFor(model => model.ActivityType, "Activity type", htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
@@ -39,11 +39,11 @@
                     @Html.ValidationMessageFor(model => model.ActivityType, "", new { @class = "text-danger" })
                 </div>
             </div>
-        }
+        @*}
         else
         {
             @Html.HiddenFor(model => model.ActivityTypeId)
-        }
+        }*@
 
         <div class="form-group">
             @Html.LabelFor(model => model.IsShared, htmlAttributes: new { @class = "control-label col-md-2" })
