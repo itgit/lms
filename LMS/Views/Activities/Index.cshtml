@@ -7,8 +7,16 @@
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create", new { id = ViewBag.groupid }, null) | 
-    @Html.ActionLink("View rendered schedule", "Index", "Schedules", new { id = ViewBag.groupid }, null)
+@{ if (((List<LMS.Models.Group>)ViewBag.groups).Count() == 1)
+ {
+     if (HttpContext.Current.User.IsInRole("admin"))
+     {
+        @Html.ActionLink("Create new activity", "Create", new { id = ViewBag.groupid }, null);
+        @(" | ");
+     }
+    @Html.ActionLink("View rendered schedule", "Index", "Schedules", new { id = ViewBag.groupid }, null);
+ }
+}
 </p>
 @if (ViewBag.groupid == null)
 {
@@ -35,7 +43,7 @@
                 </th>
                 <th></th>
             </tr>
-            @{var lastday = LMS.Models.Day.Monday; bool background = false;}
+            @{ var lastday = LMS.Models.Day.Monday; bool background = false; }
             @foreach (var item in Model.Where(g => g.Group == group)) {
                 if (lastday != item.Day) { background = !background; }
                 <tr @(background ? "" : "class=grey")>

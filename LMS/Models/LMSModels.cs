@@ -10,12 +10,12 @@ namespace LMS.Models
     public class Group
     {
         [Key]
-        public int? Id { get; set; }
+        public int Id { get; set; }
         [Display(Name = "Group name")]
         public string Name { get; set; } //gruppnamn
 
         public virtual ICollection<Activity> Activities { get; set; }
-
+        public virtual ICollection<File> Files { get; set; }
         public virtual ICollection<ApplicationUser> Users { get; set; }
     }
 
@@ -55,7 +55,7 @@ namespace LMS.Models
         public int? FileSize { get; set; }
         [Display(Name = "File type")]
         public string FileType { get; set; }
-        [Display(Name = "Date")]
+        [Display(Name = "Upload date")]
         public DateTime FileDate { get; set; }
         [Display(Name = "Shared?")]
         public bool IsShared { get; set; }
@@ -73,6 +73,10 @@ namespace LMS.Models
         //[Required]
         //[DataType(DataType.Upload)]
         //public HttpPostedFileBase Upload { get; set; }
+        public int? GroupId { get; set; }
+        [ForeignKey("GroupId")]
+        [Display(Name = "Group")]
+        public virtual Group Group { get; set; }
         [NotMapped]
         [Display(Name = "File size")]
         public string ReadableFileSize
@@ -103,6 +107,10 @@ namespace LMS.Models
         [ForeignKey("ActivityTypeId")]
         [Display(Name = "Activity type")]
         public virtual ActivityType ActivityType { get; set; }
+        public int GroupId { get; set; }
+        [ForeignKey("GroupId")]
+        [Display(Name = "Group")]
+        public virtual Group Group { get; set; }
         [Display(Name = "Shared?")]
         public bool IsShared { get; set; }
         [Display(Name = "Comment")]

@@ -5,21 +5,35 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace LMS.Controllers
 {
     public class SchedulesController : Controller
     {
+        private ApplicationUserManager _userManager;
+
         private ApplicationDbContext db = new ApplicationDbContext();
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
 
         // GET: Schedules
         [Authorize]
         public ActionResult Index(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            id = User.IsInRole("admin") && id != null ? id : UserManager.FindById(User.Identity.GetUserId()).GroupId;
+
             var group = db.Groups.Find(id);
             if (group == null)
             {

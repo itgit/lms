@@ -164,39 +164,24 @@
     <Compile Include="Controllers\ActivitiesController.cs" />
     <Compile Include="Controllers\FilesController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\SchedulesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508191948403_First.cs" />
-    <Compile Include="Migrations\201508191948403_First.Designer.cs">
-      <DependentUpon>201508191948403_First.cs</DependentUpon>
+    <Compile Include="Migrations\201508181808593_second.cs" />
+    <Compile Include="Migrations\201508191138280_idag.cs" />
+    <Compile Include="Migrations\201508250705543_tisdag.cs" />
+    <Compile Include="Migrations\201508250705543_tisdag.Designer.cs">
+      <DependentUpon>201508250705543_tisdag.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508192139270_Comment.cs" />
-    <Compile Include="Migrations\201508192139270_Comment.Designer.cs">
-      <DependentUpon>201508192139270_Comment.cs</DependentUpon>
+    <Compile Include="Migrations\201508250748435_filegroup.cs" />
+    <Compile Include="Migrations\201508250748435_filegroup.Designer.cs">
+      <DependentUpon>201508250748435_filegroup.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508192146184_Comment2.cs" />
-    <Compile Include="Migrations\201508192146184_Comment2.Designer.cs">
-      <DependentUpon>201508192146184_Comment2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201508201916170_activitytype.cs" />
-    <Compile Include="Migrations\201508201916170_activitytype.Designer.cs">
-      <DependentUpon>201508201916170_activitytype.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201508202018208_whitespaces.cs" />
-    <Compile Include="Migrations\201508202018208_whitespaces.Designer.cs">
-      <DependentUpon>201508202018208_whitespaces.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201508230140229_fileextensions.cs" />
-    <Compile Include="Migrations\201508230140229_fileextensions.Designer.cs">
-      <DependentUpon>201508230140229_fileextensions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201508230153444_files.cs" />
-    <Compile Include="Migrations\201508230153444_files.Designer.cs">
-      <DependentUpon>201508230153444_files.cs</DependentUpon>
+    <Compile Include="Migrations\201508250829489_filegroup2.cs" />
+    <Compile Include="Migrations\201508250829489_filegroup2.Designer.cs">
+      <DependentUpon>201508250829489_filegroup2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -208,6 +193,10 @@
     <Compile Include="Shared.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\aspnet-LMS-20150730030239.mdf" />
+    <Content Include="App_Data\aspnet-LMS-20150730030239_log.ldf">
+      <DependentUpon>aspnet-LMS-20150730030239.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\logo-laxicon.gif" />
@@ -231,7 +220,9 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -242,9 +233,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
@@ -258,8 +246,12 @@
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
     <Content Include="Views\Account\SendCode.cshtml" />
     <Content Include="Views\Account\VerifyCode.cshtml" />
+    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
     <Content Include="Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Views\Manage\Index2.cshtml" />
     <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Manage\SetPassword.cshtml" />
+    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
@@ -288,29 +280,14 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201508191948403_First.resx">
-      <DependentUpon>201508191948403_First.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508250705543_tisdag.resx">
+      <DependentUpon>201508250705543_tisdag.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508192139270_Comment.resx">
-      <DependentUpon>201508192139270_Comment.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508250748435_filegroup.resx">
+      <DependentUpon>201508250748435_filegroup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508192146184_Comment2.resx">
-      <DependentUpon>201508192146184_Comment2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508201916170_activitytype.resx">
-      <DependentUpon>201508201916170_activitytype.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508202018208_whitespaces.resx">
-      <DependentUpon>201508202018208_whitespaces.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508230140229_fileextensions.resx">
-      <DependentUpon>201508230140229_fileextensions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508230153444_files.resx">
-      <DependentUpon>201508230153444_files.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508250829489_filegroup2.resx">
+      <DependentUpon>201508250829489_filegroup2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

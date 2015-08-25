@@ -30,7 +30,6 @@ namespace LMS.Models
         [ForeignKey("GroupId")]
         [Display(Name = "Group")]
         public virtual Group Group { get; set; }
-
         [NotMapped]
         [Display(Name = "Full name")]
         public string FullName

@@ -36,32 +36,43 @@ namespace LMS.Controllers
 
         // GET: Files
         [Authorize]
-        public ActionResult Index(int? id)
+        public ActionResult Index(int? id, int? activityTypeId)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var files = db.Files.Include(f => f.User); // all files with the same activitytype as the logged in user
+            var files = db.Files.Include(f => f.User);
+            if (activityTypeId != null)
+            {
+                files = files.Where(f => f.ActivityTypeId == activityTypeId);
+            }
 
-            var adminRole = (from r in db.Roles where r.Name.Contains("admin") select r).FirstOrDefault();
-            var admins = db.Users.Where(x => x.Roles.Select(y => y.RoleId).Contains(adminRole.Id)).ToList();
+            //var adminRole = (from r in db.Roles where r.Name.Contains("admin") select r).FirstOrDefault();
+            //var admins = db.Users.Where(x => x.Roles.Select(y => y.RoleId).Contains(adminRole.Id)).ToList();
 
             if (!User.IsInRole("admin"))
             {
+                id = UserManager.FindById(User.Identity.GetUserId()).GroupId; // non-admins can only see their own group
                 var groupActivityTypeIds = user.Group.Activities.Select(a => a.ActivityTypeId).ToList();
-                files = files.Where(f => (f.IsShared && (f.User.GroupId == user.GroupId || (f.User.Roles.Select(r => r.RoleId).Contains(adminRole.Id) && groupActivityTypeIds.Contains(f.ActivityTypeId))) || f.UserId == user.Id)); //only see your groups shared or your own files
+                if (activityTypeId != null)
+                {
+                    groupActivityTypeIds = groupActivityTypeIds.Where(at => at.Equals(activityTypeId)).ToList();
+                }
+                files = files.Where(f => groupActivityTypeIds.Contains(f.ActivityTypeId) && f.IsShared && (f.GroupId == user.GroupId || f.UserId == user.Id)); //only see your groups shared or your own files
+                ViewBag.GroupActivityTypeIds = groupActivityTypeIds;
+            }
+            else if (id != null)
+            {
+                ViewBag.GroupActivityTypeIds = db.Groups.Find(id).Activities.Select(a => a.ActivityTypeId).ToList();
+                files = files.Where(f => f.GroupId == id);
             }
             else
             {
-                if (id != null)
-                {
-                    var groupActivityTypeIds = db.Groups.Find(id).Activities.Select(a => a.ActivityTypeId).ToList();
-                    files = files.Where(f => f.User.GroupId == id || f.User.Roles.Select(r => r.RoleId).Contains(adminRole.Id) && groupActivityTypeIds.Contains(f.ActivityTypeId));
-                }
+                ViewBag.GroupActivityTypeIds = db.Activities.Select(a => a.ActivityTypeId)/*.Where(a => a.Equals(activityTypeId ?? a))*/.ToList();
             }
 
             ViewBag.GroupId = id;
-            ViewBag.isYourGroup = UserManager.FindById(User.Identity.GetUserId()).GroupId == id;
+            ViewBag.ActivitiesCount = db.Activities.Where(a => a.GroupId == id).Count();
 
-            return View(files.OrderBy(f => f.FileName).ToList());
+            return View(files.OrderBy(f => f.FileDate).ToList());
         }
 
         // GET: Files/Details/5
@@ -102,14 +113,25 @@ namespace LMS.Controllers
         }
 
         [Authorize]
-        public ActionResult Upload()
+        public ActionResult Upload(int? id)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             //var activities = db.ActivityTypes.Where(at => at.Activities == user.Group.Activities);
 
+            int? groupId;
+
+            if (User.IsInRole("admin") && id != null)
+            {
+                groupId = id;
+            }
+            else
+            {
+                groupId = user.GroupId;
+            }
+
             ViewBag.ActivityTypeId =
             from a in db.Activities
-            where a.GroupId == user.GroupId
+            where a.GroupId == groupId
             join at in db.ActivityTypes on a.ActivityTypeId equals at.Id
             orderby at.Name ascending
             select new SelectListItem
@@ -117,23 +139,22 @@ namespace LMS.Controllers
                 Value = at.Id.ToString(),
                 Text = at.Name
             };
+            ViewBag.GroupId = groupId;
 
-            //ViewBag.ActivityTypeId = users;//new SelectList(users.ToList(), "Id", "Name");
-            //"Id", "Name");
             return View();
         }
 
         [HttpPost]
         [Authorize]
         //public ActionResult Upload(HttpPostedFileBase Upload, bool isShared, int activityTypeId, string content)
-        public ActionResult Upload([Bind(Include = "Upload,IsShared,ActivityTypeId")] FileViewModel file, string Comment)
+        public ActionResult Upload([Bind(Include = "Upload,IsShared,GroupId,ActivityTypeId")] FileViewModel file, string Comment, int? id)
         {
             var userId = User.Identity.GetUserId();
             if (userId == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Couldn't find user!");
             }
-            var user = db.Users.Find(userId);
+            var user = UserManager.FindById(userId);
             var group = db.Users.Find(userId).Group;
 
             if (ModelState.IsValid)
@@ -191,6 +212,7 @@ namespace LMS.Controllers
                     Id = fileId,
                     UserId = user.Id,
                     ActivityTypeId = file.ActivityTypeId,
+                    GroupId = User.IsInRole("admin") ? file.GroupId : group.Id,
                     IsShared = file.IsShared,
                     FileDate = now,
                     FileName = System.IO.Path.GetFileNameWithoutExtension(file.Upload.FileName),
@@ -199,14 +221,6 @@ namespace LMS.Controllers
                     FileSize = file.Upload.ContentLength,
                     FileType = file.Upload.ContentType
                 };
-
-                //file.Id = fileId;
-                //file.FileDate = now;
-                //file.UserId = user.Id;
-                //file.FileName = file.Upload.FileName;
-                //file.FilePath = filePath + serverFileName;
-                //file.FileSize = file.Upload.ContentLength;
-                //file.FileType = file.Upload.ContentType;
 
                 db.Files.Add(newFile);
 
@@ -220,12 +234,12 @@ namespace LMS.Controllers
                         dbcontext.SaveChanges();
                     }
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { id = newFile.GroupId });
             }
 
             var activityTypes =
                 from a in db.Activities
-                where a.GroupId == user.GroupId
+                where a.GroupId == file.GroupId
                 join at in db.ActivityTypes on a.ActivityTypeId equals at.Id
                 orderby at.Name ascending
                 select new SelectListItem
@@ -235,6 +249,7 @@ namespace LMS.Controllers
                     Selected = at.Id == file.ActivityTypeId
                 };
 
+            ViewBag.GroupId = file.GroupId;
             ViewBag.ActivityTypeId = activityTypes;
             return View(new FileViewModel() { ActivityTypeId = file.ActivityTypeId, Comment = Comment, IsShared = file.IsShared, Upload = file.Upload });
         }
@@ -302,7 +317,9 @@ namespace LMS.Controllers
                 return HttpNotFound();
             }
 
-            ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes, "Id", "Name", file.ActivityTypeId);
+            var groupActivityTypeIds = db.Activities.Where(a => a.GroupId == file.GroupId).Select(g => g.ActivityTypeId).ToList();
+            ViewBag.HasGroupActivity = groupActivityTypeIds.Contains(file.ActivityTypeId);
+            ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes.Where(a => groupActivityTypeIds.Contains(a.Id)), "Id", "Name", file.ActivityTypeId); 
             ViewBag.UserId = new SelectList(db.Users, "Id", "UserName", file.UserId);
             return View(file);
         }
@@ -313,19 +330,9 @@ namespace LMS.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult Edit([Bind(Include = "Id,FileName,FileExtension,IsShared")] File file)
+        public ActionResult Edit([Bind(Include = "Id,FileName,FileExtension,GroupId,ActivityTypeId,IsShared")] File file)
         {
-            var user = UserManager.FindById(User.Identity.GetUserId());
-
-                //using(var dbcontext = new ApplicationDbContext())
-                //{
-                //    if (!UserManager.IsInRole(user.Id, "admin") && user.Id != dbcontext.Files.Find(file.Id).UserId)
-                //    {
-                //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "This is not your file!");
-                //    }
-                //}
-
-            if (ModelState.IsValid)
+             if (ModelState.IsValid)
             {
                 db.Entry(file).State = EntityState.Modified;
                 db.Entry(file).Property(f => f.FileExtension).IsModified = false;
@@ -333,12 +340,14 @@ namespace LMS.Controllers
                 db.Entry(file).Property(f => f.FileSize).IsModified = false;
                 db.Entry(file).Property(f => f.FileType).IsModified = false;
                 db.Entry(file).Property(f => f.FileDate).IsModified = false;
-                db.Entry(file).Property(f => f.ActivityTypeId).IsModified = false;
                 db.Entry(file).Property(f => f.UserId).IsModified = false;
+                db.Entry(file).Property(f => f.GroupId).IsModified = false;
+                //db.Entry(file).Property(f => f.ActivityType).IsModified = file.ActivityTypeId != null;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { id = file.GroupId });
             }
 
+            ViewBag.HasGroupActivity = db.Activities.Where(a => a.GroupId == file.GroupId).Select(a => a.ActivityTypeId).Contains(file.ActivityTypeId);
             ViewBag.ActivityTypeId = new SelectList(db.Activities, "Id", "FirstName", file.ActivityTypeId);
             ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", file.UserId);
             return View(file);

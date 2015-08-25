@@ -14,6 +14,9 @@
         <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
+        <th>
+            Number of members
+        </th>
         <th></th>
     </tr>
 
@@ -23,9 +26,13 @@
             @Html.DisplayFor(modelItem => item.Name)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Show schedule", "Index", "Schedules", new { id=item.Id}, null) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @(item.Users.Count())
+        </td>
+        <td>
+            @Html.ActionLink("Activities", "Index", "Activities", new { id = item.Id }, null) |
+            @{ if (item.Activities.Count() > 0) { @(new MvcHtmlString(Html.ActionLink("Show schedule", "Index", "Schedules", new { id = item.Id }, null) + " | ")); } }
+            @Html.ActionLink("Rename", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
         </td>
     </tr>
 }

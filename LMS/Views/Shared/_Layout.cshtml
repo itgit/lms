@@ -22,11 +22,11 @@
                 </a>
                 @*Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })*@
             </div>
-            <div class="navbar-collapse collapse">
+            <div class="navbar-collapse collapse @{ if (!HttpContext.Current.User.Identity.IsAuthenticated || HttpContext.Current.User.IsInRole("admin")) { new MvcHtmlString("hidden"); } }">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("Activities", "Index", "Activities")</li>
+                    <li>@Html.ActionLink("Schedule", "Index", "Schedules")</li>
+                    <li>@Html.ActionLink("Files", "Index", "Files")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>

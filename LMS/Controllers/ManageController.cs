@@ -369,7 +369,7 @@ namespace LMS.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin")]
-        public ActionResult EditUser([Bind(Include = "Id,UserName,Email,FirstName,Lastname,GroupId")] ApplicationUser user, bool IsTeacher)
+        public ActionResult EditUser([Bind(Include = "Id,UserName,Email,FirstName,Lastname,GroupId")] ApplicationUser user, bool DoMigrateFiles, bool IsTeacher)
         {
 
             if (ModelState.IsValid)
@@ -385,6 +385,15 @@ namespace LMS.Controllers
                 db.Entry(user).Property(u => u.SecurityStamp).IsModified = false;
                 db.Entry(user).Property(u => u.TwoFactorEnabled).IsModified = false;
                 db.SaveChanges();
+
+                if (DoMigrateFiles)
+                {
+                    foreach (var file in db.Files.Where(f => f.UserId == user.Id))
+                    {
+                        file.GroupId = user.GroupId;
+                    }
+                    db.SaveChanges();
+                }
 
                 if (IsTeacher)
                 {

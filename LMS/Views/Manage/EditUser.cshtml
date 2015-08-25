@@ -57,6 +57,15 @@
             </div>
         </div>
 
+        <div class="form-group hidden" id="MigrateFiles">
+            @Html.LabelFor(model => model.DoMigrateFiles, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.CheckBoxFor(model => model.DoMigrateFiles)
+                </div>
+            </div>
+        </div>
+
         <div class="form-group">
             @Html.LabelFor(model => model.IsTeacher, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -87,4 +96,10 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $("#GroupId").change(function () {
+            $("#MigrateFiles").removeClass("hidden");
+            $("#DoMigrateFiles").prop("checked", true);
+        });
+    </script>
 }

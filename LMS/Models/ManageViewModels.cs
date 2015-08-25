@@ -117,6 +117,9 @@ namespace LMS.Models
         [Display(Name = "Convert to teacher?")]
         public bool IsTeacher { get; set; }
 
+        [Display(Name = "Migrate files to new group?")]
+        public bool DoMigrateFiles { get; set; }
+
         [Display(Name = "Group")]
         public int? GroupId { get; set; }
     }

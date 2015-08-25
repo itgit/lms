@@ -1,12 +1,9 @@
-﻿@model IEnumerable<LMS.Models.UserViewModel>
-
-@{
-    ViewBag.Title = "List of teachers and students";
-}
+﻿@using Microsoft.AspNet.Identity
+@model IEnumerable<LMS.Models.UserViewModel>
 
 <h2>@ViewBag.Title</h2>
 
-@if (User.IsInRole("admin"))
+@if (HttpContext.Current.User.IsInRole("admin"))
 {
     <p>
         @Html.ActionLink("Register new user", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" }) |
@@ -74,15 +71,12 @@
         <div class="panel-heading">
             <span style="font-size:2em;">@group.Name</span>
             <span style="float:right;">
-                @if(group.Activities.Count() > 0)
+                @{ var filesCount = HttpContext.Current.User.IsInRole("admin") ? group.Files.Count() : group.Files.Where(f => f.IsShared & group.Activities.Select(a => a.ActivityTypeId).Contains(f.ActivityTypeId) || f.UserId == User.Identity.GetUserId()).Count(); }
+                @(new MvcHtmlString(@Html.ActionLink("Files" + (filesCount > 0 ? " (" + filesCount + ")" : ""), "Index", "Files", new { id = group.Id }, null) + " | "))
+                @Html.ActionLink("Activities" + (group.Activities.Count() > 0 ? " (" + group.Activities.Count() + ")" : ""), "Index", "Activities", new { id = group.Id }, null)
+                @if (group.Activities.Count() > 0)
                 {
-                    @(new MvcHtmlString(@Html.ActionLink("Files", "Index", "Files", new { id = group.Id }, null) + " | "))
-                }
-                @Html.ActionLink("Activities", "Index", "Activities", new { id = group.Id }, null)
-                @if (((LMS.Models.Group)group).Activities.Count() > 0)
-                {
-                    <span> | </span>
-                    @Html.ActionLink("Schedule", "Index", "Schedules", new { id = group.Id }, null)
+                    @(new MvcHtmlString(" | " + @Html.ActionLink("Schedule", "Index", "Schedules", new { id = group.Id }, null)))
                 }
             </span>
         </div>
@@ -127,7 +121,7 @@
                     <td>
                         @Html.DisplayFor(modelItem => user.Role)
                     </td>
-                    @if (User.IsInRole("admin"))
+                    @if (HttpContext.Current.User.IsInRole("admin"))
                     {
                         <td>
                             @Html.ActionLink("Edit", "EditUser", new { id = user.Id })

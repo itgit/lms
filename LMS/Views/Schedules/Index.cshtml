@@ -8,9 +8,9 @@
 <br />
 <h2>Schedule for @ViewBag.groupname</h2>
 
-@Html.ActionLink("Edit schedule", "Index", "Activities", new { id = ViewBag.groupid }, null)
-    <canvas id="schedule" class="col-xs-12" style="padding-right: 0; padding-left: 0;"></canvas>
+<canvas id="schedule" class="col-xs-12" style="padding-right: 0; padding-left: 0;"></canvas>
 
+@Html.ActionLink("Back to activities", "Index", "Activities", new { id = ViewBag.groupid }, null)
 
 @section scripts
 {

@@ -37,20 +37,24 @@
 }
 
 <h2>Index</h2>
+<h1>@Roles.GetUsersInRole("admin").FirstOrDefault()</h1>
 
 <p>
-    @if (User.IsInRole("admin") && !ViewBag.isYourGroup)
+    @if (ViewBag.ActivitiesCount > 0)
     {
-        @(new MvcHtmlString("This is not your group, so you cannot upload files here."))
+        @Html.ActionLink("Upload", "Upload", new { id = ViewBag.GroupId }, null)
     }
     else
     {
-        @Html.ActionLink("Upload", "Upload")
+        @(new MvcHtmlString("There needs to be activities associated with this group before you can upload files."))
     }
-
+    
 </p>
 <table class="table">
     <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FileDate)
+        </th>
         <th>
             @Html.DisplayName("User name")
         </th>
@@ -72,9 +76,12 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.User.UserName)
+            @Html.DisplayFor(modelItem => item.FileDate)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.User.UserName)
+        </td>
+        <td @{ if (!ViewBag.GroupActivityTypeIds.Contains(item.ActivityTypeId)) { @("class = danger") ; } }>
             @Html.DisplayFor(modelItem => item.ActivityType.Name)
         </td>
         <td>

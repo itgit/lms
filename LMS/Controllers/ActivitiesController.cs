@@ -7,17 +7,38 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using LMS.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace LMS.Controllers
 {
     public class ActivitiesController : Controller
     {
+        private ApplicationUserManager _userManager;
+
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
         // GET: Activities
+        [Authorize]
         public ActionResult Index(int? id)
         {
-            if (id == null)
+            if (!User.IsInRole("admin"))
+            {
+                id = UserManager.FindById(User.Identity.GetUserId()).GroupId;
+            }
+            else if (id == null)
             {
                 if (db.Activities != null)
                 {
@@ -26,6 +47,7 @@ namespace LMS.Controllers
                 }
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound, "No activities found");
             }
+
             var group = db.Groups.Find(id);
             if (group == null)
             {
@@ -37,6 +59,7 @@ namespace LMS.Controllers
         }
 
         // GET: Activities/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -52,6 +75,7 @@ namespace LMS.Controllers
         }
 
         // GET: Activities/Create
+        [Authorize(Roles = "admin")]
         public ActionResult Create(int? id)
         {
             if (id == null)
@@ -73,6 +97,7 @@ namespace LMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public ActionResult Create([Bind(Include = "Id,ActivityTypeId,Day,StartTime,EndTime,GroupId")] Activity activity)
         {
             if (ModelState.IsValid)
@@ -105,6 +130,7 @@ namespace LMS.Controllers
         }
 
         // GET: Activities/Edit/5
+        [Authorize(Roles = "admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -126,6 +152,7 @@ namespace LMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public ActionResult Edit([Bind(Include = "Id,ActivityTypeId,Day,StartTime,EndTime,GroupId")] Activity activity)
         {
             if (ModelState.IsValid)
@@ -159,6 +186,7 @@ namespace LMS.Controllers
         }
 
         // GET: Activities/Delete/5
+        [Authorize(Roles = "admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -176,6 +204,7 @@ namespace LMS.Controllers
         // POST: Activities/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             Activity activity = db.Activities.Find(id);
