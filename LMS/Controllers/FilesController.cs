@@ -56,7 +56,7 @@ namespace LMS.Controllers
                 {
                     groupActivityTypeIds = groupActivityTypeIds.Where(at => at.Equals(activityTypeId)).ToList();
                 }
-                files = files.Where(f => groupActivityTypeIds.Contains(f.ActivityTypeId) && f.IsShared && (f.GroupId == user.GroupId || f.UserId == user.Id)); //only see your groups shared or your own files
+                files = files.Where(f => groupActivityTypeIds.Contains(f.ActivityTypeId) && f.IsShared && f.GroupId == user.GroupId || f.UserId == user.Id); //only see your groups shared or your own files
                 ViewBag.GroupActivityTypeIds = groupActivityTypeIds;
             }
             else if (id != null)
@@ -75,7 +75,7 @@ namespace LMS.Controllers
             return View(files.OrderByDescending(f => f.FileDate).ToList());
         }
 
-        // GET: Files/Details/5
+        // GET: Files/Comments/5
         [Authorize]
         public ActionResult Comments(Guid id)
         {
@@ -276,7 +276,7 @@ namespace LMS.Controllers
         }
 
         [Authorize]
-        public ActionResult Thumbnail(Guid id, int size = 240)
+        public ActionResult Thumbnail(Guid id, int size = 180)
         {
             File file = db.Files.Find(id);
 
@@ -318,8 +318,9 @@ namespace LMS.Controllers
             }
 
             var groupActivityTypeIds = db.Activities.Where(a => a.GroupId == file.GroupId).Select(g => g.ActivityTypeId).ToList();
-            ViewBag.HasGroupActivity = groupActivityTypeIds.Contains(file.ActivityTypeId);
-            ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes.Where(a => groupActivityTypeIds.Contains(a.Id) || a.Id == file.ActivityTypeId).Select(i => new { Id = i.Id, Name = (i.Id == file.ActivityTypeId ? "‼ " + i.Name + " (Not a group activity type!)" : i.Name) }), "Id", "Name", file.ActivityTypeId); 
+            var hasGroupActivity = groupActivityTypeIds.Contains(file.ActivityTypeId);
+            //ViewBag.HasGroupActivity = hasGroupActivity;
+            ViewBag.ActivityTypeId = new SelectList(db.ActivityTypes.Where(a => groupActivityTypeIds.Contains(a.Id) || a.Id == file.ActivityTypeId).Select(i => new { Id = i.Id, Name = (i.Id == file.ActivityTypeId && !hasGroupActivity ? "‼ " + i.Name + " (Not a group activity type!)" : i.Name) }), "Id", "Name", file.ActivityTypeId); 
             ViewBag.UserId = new SelectList(db.Users, "Id", "UserName", file.UserId);
             return View(file);
         }
@@ -347,7 +348,7 @@ namespace LMS.Controllers
                 return RedirectToAction("Index", new { id = file.GroupId });
             }
 
-            ViewBag.HasGroupActivity = db.Activities.Where(a => a.GroupId == file.GroupId).Select(a => a.ActivityTypeId).Contains(file.ActivityTypeId);
+            //ViewBag.HasGroupActivity = db.Activities.Where(a => a.GroupId == file.GroupId).Select(a => a.ActivityTypeId).Contains(file.ActivityTypeId);
             ViewBag.ActivityTypeId = new SelectList(db.Activities, "Id", "FirstName", file.ActivityTypeId);
             ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", file.UserId);
             return View(file);

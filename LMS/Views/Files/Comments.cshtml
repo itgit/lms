@@ -2,7 +2,7 @@
 @model LMS.Models.File    
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Comments";
 }
 
 @section scripts
@@ -16,6 +16,11 @@
 
 <h2>Comments</h2>
 <hr />
+@if (Model.FileType == "image/bmp" || Model.FileType == "image/gif" || Model.FileType == "image/jpeg" || Model.FileType == "image/png")
+{
+    <h4>Preview:</h4>
+    <img src="@Url.Action("Thumbnail", "Files", new { id = Model.Id, size = 240 })" alt="@Model.FileName" />
+}
 
 @if (Model.Comments.Count() > 0)
 {

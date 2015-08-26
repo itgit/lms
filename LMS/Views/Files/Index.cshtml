@@ -19,7 +19,8 @@
 
         @foreach (var item in Model)
         {
-            @Html.Raw("img.push(new Image('" + (item.FileType == "image/bmp" || item.FileType == "image/gif" || item.FileType == "image/jpeg" || item.FileType == "image/png" ? "<img src=\"" + Url.Action("Thumbnail", "Files", new { id = item.Id }) + "\" />" : "") + (item.Comments.Count() > 0 ? "<div><em>" + item.Comments.FirstOrDefault().Content + "</em><div>" : "") + "', '<div class=\"text-right\">" + item.FileDate.ToShortDateString() + "</div>'));" + Environment.NewLine)
+            var comment = MvcHtmlString.Create(Html.Encode(item.Comments.FirstOrDefault().Content).Replace(Environment.NewLine, "<br />"));
+            @Html.Raw("img.push(new Image('" + (item.FileType == "image/bmp" || item.FileType == "image/gif" || item.FileType == "image/jpeg" || item.FileType == "image/png" ? "<img src=\"" + Url.Action("Thumbnail", "Files", new { id = item.Id }) + "\" />" : "") + (item.Comments.Count() > 0 ? "<div><em>" + comment + "</em><div>" : "") + "', '<div class=\"text-right\">" + item.FileDate.ToShortDateString() + "</div>'));" + Environment.NewLine)
         }
 
         $(function () {
@@ -95,7 +96,7 @@
         </td>
         <td>
             @(User.Identity.GetUserId() == item.UserId || User.IsInRole("admin") ? new MvcHtmlString(@Html.ActionLink("Edit", "Edit", new { id = item.Id }) + " | " + Html.ActionLink("Delete", "Delete", new { id = item.Id }) + " |") : null)
-            @Html.ActionLink("Comments" + (item.Comments.Count() > 0 ?  (" (" + item.Comments.Count() + ")") : ""), "Details", new { id = item.Id })
+            @Html.ActionLink("Comments" + (item.Comments.Count() > 0 ?  (" (" + item.Comments.Count() + ")") : ""), "Comments", new { id = item.Id })
 
         </td>
     </tr>
